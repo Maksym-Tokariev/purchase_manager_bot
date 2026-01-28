@@ -1,0 +1,33 @@
+{
+  "name": "tgbot",
+  "version": "1.0.0",
+  "main": "Starter",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "ts-node net/Starter.ts"
+  },
+  "type": "commonjs",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "node-telegram-bot-api": "^0.67.0"
+  },
+  "compilerOptions": {
+    "module": "ESNext",
+    "target": "ES2020",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "outDir": "dist"
+  },
+  "devDependencies": {
+    "@types/node": "^25.0.10",
+    "@types/node-telegram-bot-api": "^0.64.13",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  }
+}
