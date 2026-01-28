@@ -1,13 +1,16 @@
 import {COMMANDS} from "../config/Commands";
-import {CommandHandler} from "../interfaces/CommandHandler";
 
 export class CommandService {
-    private commands: CommandHandler[] = [];
+    private commands: string[] = [];
 
-    public async setCommands(): Promise<void>  {
+    public async setCommandsList(): Promise<void>  {
         for (const command in COMMANDS) {
-            console.log(command)
+            console.log(`Command has been set [${command}]`);
+            this.commands.push(command);
         }
     }
 
+    public getCommands(): string[] {
+        return this.commands;
+    }
 }

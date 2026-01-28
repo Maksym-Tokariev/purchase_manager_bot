@@ -18,7 +18,6 @@ export class Bot {
     private initialize(): void {
         this.setupErrorHandling();
         this.setupMessageListener();
-
     }
 
     private setupErrorHandling(): void {
@@ -32,7 +31,6 @@ export class Bot {
     }
 
     public async start(): Promise<void> {
-        new CommandService();
         console.log('Bot started successfully!');
     }
 
