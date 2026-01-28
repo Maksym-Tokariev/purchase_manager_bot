@@ -1,16 +1,36 @@
 import {COMMANDS} from "../config/Commands";
+import TelegramBot, {BotCommand} from "node-telegram-bot-api";
 
 export class CommandService {
-    private commands: string[] = [];
+    private bot: TelegramBot;
+    private commands: BotCommand[] = [];
 
-    public async setCommandsList(): Promise<void>  {
-        for (const command in COMMANDS) {
-            console.log(`Command has been set [${command}]`);
-            this.commands.push(command);
-        }
+    constructor(bot: TelegramBot) {
+        this.bot = bot;
     }
 
-    public getCommands(): string[] {
+    public async setCommandsList(): Promise<void>  {
+        this.commands.push({
+            command: COMMANDS.START,
+            description: "Launching the bot"
+        });
+        this.commands.push({
+            command: COMMANDS.REF,
+            description: "Get a referral link"
+        })
+        this.commands.push({
+            command: COMMANDS.HELP,
+            description: "Supplementary information"
+        })
+
+        for (const botCommand of this.commands) {
+            console.log(`Command has been set [${botCommand.command}]`);
+        }
+
+        await this.bot.setMyCommands(this.commands);
+    }
+
+    public getCommands(): BotCommand[] {
         return this.commands;
     }
 }

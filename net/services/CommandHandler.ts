@@ -1,13 +1,16 @@
-import {Message} from "node-telegram-bot-api";
+import TelegramBot, {BotCommand, Message} from "node-telegram-bot-api";
 import {CommandService} from "./CommandService";
 import {MessageSender} from "./MessageSender";
 
 export class CommandHandler {
-    private commandService: CommandService = new CommandService();
+    private commandService: CommandService;
     private messageSender: MessageSender;
-    private commands: string[];
+    private bot: TelegramBot;
+    private commands: BotCommand[];
 
-    constructor(messageSender: MessageSender) {
+    constructor(messageSender: MessageSender, bot: TelegramBot) {
+        this.bot = bot;
+        this.commandService = new CommandService(bot)
         this.commandService.setCommandsList();
         this.commands = this.commandService.getCommands();
         this.messageSender = messageSender;

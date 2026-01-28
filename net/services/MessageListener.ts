@@ -13,7 +13,7 @@ export class MessageListener {
     constructor(bot: Bot) {
         this.bot = bot.getTelegramBot();
         this.messageSender = new MessageSender(bot.getTelegramBot());
-        this.commandHandler = new CommandHandler(this.messageSender);
+        this.commandHandler = new CommandHandler(this.messageSender, bot.getTelegramBot());
         this.messageHandler = new MessageHandler(this.messageSender);
         this.listen();
         console.log("MessageListener has been initialized")

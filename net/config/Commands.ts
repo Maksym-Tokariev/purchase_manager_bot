@@ -1,4 +1,5 @@
 export const COMMANDS = {
-    start: "/start",
-    help: "/help"
+    START: "/start",
+    HELP: "/help",
+    REF: "/ref"
 }
