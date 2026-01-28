@@ -1,7 +1,7 @@
 import {Message} from "node-telegram-bot-api";
 
-export class CommandHandler {
+export class MessageHandler {
     public async handle(message: Message): Promise<void> {
-        console.log(`Command from ${message.from?.username} : ${message.text}`);
+        console.log(`Message from ${message.from?.username} : ${message.text}`);
     }
 }

@@ -2,11 +2,12 @@ import {config} from "./config/Config";
 import TelegramBot from "node-telegram-bot-api";
 import {Message} from "node-telegram-bot-api";
 import {CommandService} from "./services/CommandService";
+import {MessageListener} from "./services/MessageListener";
 
 
 export class Bot {
     private token: string = config.token;
-    private bot: TelegramBot;
+    private readonly bot: TelegramBot;
 
     public constructor() {
         this.bot = new TelegramBot(this.token, { polling: true });
@@ -27,23 +28,7 @@ export class Bot {
     }
 
     private setupMessageListener(): void {
-        this.bot.on('message', (msg: Message) => {
-            if (msg.text && msg.text.startsWith("/")) {
-                this.handleCommand(msg);
-            } else {
-                this.handleMessage(msg);
-            }
-        })
-    }
-
-    private async handleCommand(msg: Message): Promise<void> {
-        console.log(`Command from ${msg.from?.username} : ${msg.text}`);
-    }
-
-    private async handleMessage(msg: Message): Promise<void> {
-        if (msg.text) {
-            console.log(`Message from ${msg.from?.username} : ${msg.text}`);
-        }
+        new MessageListener(this);
     }
 
     public async start(): Promise<void> {
@@ -56,5 +41,9 @@ export class Bot {
             await this.bot.stopPolling();
         }
         console.log("Bot stopped");
+    }
+
+    public getTelegramBot(): TelegramBot {
+        return this.bot;
     }
 }
