@@ -7,7 +7,7 @@ export class MessageSender {
         this.bot = bot;
     }
 
-    public async send(message: any, arg: any): Promise<void> {
-        await this.bot.sendMessage(message, arg);
+    public async send(chatId: any, arg: any): Promise<void> {
+        await this.bot.sendMessage(chatId, arg);
     }
 }

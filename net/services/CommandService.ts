@@ -23,10 +23,6 @@ export class CommandService {
             description: "Supplementary information"
         })
 
-        for (const botCommand of this.commands) {
-            console.log(`Command has been set [${botCommand.command}]`);
-        }
-
         await this.bot.setMyCommands(this.commands);
     }
 

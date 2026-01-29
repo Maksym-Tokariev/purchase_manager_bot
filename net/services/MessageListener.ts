@@ -16,7 +16,7 @@ export class MessageListener {
         this.commandHandler = new CommandHandler(this.messageSender, bot.getTelegramBot());
         this.messageHandler = new MessageHandler(this.messageSender);
         this.listen();
-        console.log("MessageListener has been initialized")
+        console.log("MessageListener has been initialized");
     }
 
     private async listen(): Promise<void> {

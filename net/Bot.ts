@@ -1,7 +1,5 @@
 import {config} from "./config/Config";
 import TelegramBot from "node-telegram-bot-api";
-import {Message} from "node-telegram-bot-api";
-import {CommandService} from "./services/CommandService";
 import {MessageListener} from "./services/MessageListener";
 
 
