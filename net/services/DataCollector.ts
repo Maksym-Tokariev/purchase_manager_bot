@@ -4,8 +4,8 @@ class DataCollector {
     private static data: Purchase[] = [];
 
     public static async collect(purchases: Purchase[]): Promise<void> {
-        for (const pur in purchases) {
-            this.data.push();
+        for (const pur of purchases) {
+            this.data.push(pur);
         }
     }
 

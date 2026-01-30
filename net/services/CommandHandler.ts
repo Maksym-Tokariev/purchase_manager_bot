@@ -57,8 +57,8 @@ export class CommandHandler {
 
     private async handleHelp(message: Message): Promise<void> {
         await this.messageSender.send(message.chat.id,
-            "Send purchase detail using this template: \n/purchase [product name, price, time(optional)]\n"
-            + "You can also send me list? for example: \nproduct one, price one; \nproduct two, price; \n...\n"
+            "Send purchase detail using this template: \n/purchase [product name, price, date(optional)]\n"
+            + "You can also send me list for example: /purchase -l [\nproduct one, price one; \nproduct two, price; \n...\n]\n"
             + "You may omit the purchase time; in this case, I will save the dispatch time as the purchase time.\n"
         );
     }

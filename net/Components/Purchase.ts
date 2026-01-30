@@ -1,5 +1,6 @@
 export interface Purchase {
     purchase: string;
-    price: number;
-    time?: Date;
+    price: string;
+    date?: string;
+    tag?: string;
 }
