@@ -17,11 +17,27 @@ export class CommandService {
         this.commands.push({
             command: COMMANDS.REF,
             description: "Get a referral link"
-        })
+        });
         this.commands.push({
             command: COMMANDS.HELP,
             description: "Supplementary information"
-        })
+        });
+        this.commands.push({
+            command: "/options",
+            description: "Show bot options"
+        });
+        this.commands.push({
+            command: "/purchase",
+            description: "Send me your purchase"
+        });
+        this.commands.push({
+            command: "/command_list_help",
+            description: "Information about commands"
+        });
+        this.commands.push({
+            command: "/get_data",
+            description: "Show your shopping list"
+        });
 
         await this.bot.setMyCommands(this.commands);
     }

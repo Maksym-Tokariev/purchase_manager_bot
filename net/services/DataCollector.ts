@@ -5,6 +5,7 @@ class DataCollector {
 
     public static async collect(purchases: Purchase[]): Promise<void> {
         for (const pur of purchases) {
+            console.log(`Purchase added : ${pur.name} | ${pur.price}`);
             this.data.push(pur);
         }
     }

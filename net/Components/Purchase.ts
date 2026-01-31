@@ -1,5 +1,5 @@
 export interface Purchase {
-    purchase: string;
+    name: string;
     price: string;
     date?: string;
     tag?: string;
