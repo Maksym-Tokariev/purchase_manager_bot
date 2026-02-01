@@ -1,10 +1,45 @@
 import {Purchase} from "../Components/Purchase";
-import DataCollector from "./DataCollector";
+import {MongoService} from "./MongoService";
+
 
 export class DataProcessor {
+    private mongo: MongoService;
 
-    public static async createDataList(): Promise<Purchase[]> {
-        return DataCollector.getData();
+    constructor(mongo: MongoService) {
+        this.mongo = mongo;
+    }
+
+    public async addPurchase(purchase: Purchase): Promise<void> {
+        try {
+            await this.mongo.insert(purchase);
+        } catch (err) {
+            console.log("Error adding purchase: ", purchase);
+            throw err;
+        }
+    }
+
+    public async getLastPurchases(limit: number): Promise<string> {
+        if (!this.mongo.getPurchases()) throw new Error("No purchases collection");
+        const data = await this.mongo.getPurchases()!
+            .find({})
+            .sort({_id: -1})
+            .limit(limit)
+            .toArray();
+        return await this.convertPurchasesToString(data);
+    }
+
+    private async convertPurchasesToString(purchases: Purchase[]): Promise<string> {
+        let list: string = "Name | Price | Date\n";
+
+        purchases.forEach(pur => {
+            list += pur.name;
+            list += " | "
+            list += pur.price;
+            list += " | ";
+            list += pur.date;
+            list += "\n"
+        });
+        return list;
     }
 
     private format(list: Purchase[]): string[] {

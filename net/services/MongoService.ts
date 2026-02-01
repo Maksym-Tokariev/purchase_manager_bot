@@ -51,4 +51,8 @@ export class MongoService {
         const res: DeleteResult = await this.purchases.deleteOne({_id: new Object(id)});
         return res.deletedCount;
     }
+
+    public getPurchases(): Collection<Purchase> | undefined {
+        return this.purchases;
+    }
 }

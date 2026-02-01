@@ -1,14 +1,20 @@
 import {config} from "./config/Config";
 import TelegramBot from "node-telegram-bot-api";
 import {MessageListener} from "./services/MessageListener";
+import {MongoService} from "./services/MongoService";
 
 
 export class Bot {
     private token: string = config.token;
     private readonly bot: TelegramBot;
+    private readonly mongo: MongoService;
 
     public constructor() {
         this.bot = new TelegramBot(this.token, { polling: true });
+        this.mongo = new MongoService("mongodb://localhost:27017", "PurchaseManager");
+        this.mongo.connect().then(() =>
+            console.log("Successful connection to the database")
+        );
 
         this.initialize();
     }
@@ -25,7 +31,7 @@ export class Bot {
     }
 
     private setupMessageListener(): void {
-        new MessageListener(this);
+        new MessageListener(this, this.mongo);
     }
 
     public async start(): Promise<void> {

@@ -3,17 +3,19 @@ import {CommandService} from "./CommandService";
 import {MessageSender} from "./MessageSender";
 import {Purchase} from "../Components/Purchase";
 import {Parser} from "./Parser";
-import DataCollector from "./DataCollector";
+import {MongoService} from "./MongoService";
 import {DataProcessor} from "./DataProcessor";
 
 export class CommandHandler {
     private commandService: CommandService;
     private readonly messageSender: MessageSender;
     private bot: TelegramBot;
+    private dataProcessor: DataProcessor;
     private commands: BotCommand[];
 
-    constructor(messageSender: MessageSender, bot: TelegramBot) {
+    constructor(messageSender: MessageSender, bot: TelegramBot, mongo: MongoService) {
         this.bot = bot;
+        this.dataProcessor = new DataProcessor(mongo);
         this.commandService = new CommandService(bot);
         this.commandService.setCommandsList()
             .then(() => console.log("Commands have been set"));
@@ -59,7 +61,7 @@ export class CommandHandler {
     private async handleHelp(message: Message): Promise<void> {
         await this.messageSender.send(message.chat.id,
             "Send purchase detail using this template: \n/purchase [product name, price, date as dd.MM.yyyy(optional)]\n"
-            + "You can also send me list for example: /purchase -l [\nproduct one, price one; \nproduct two, price; \n...\n]\n"
+            + "You can also send me list for example: /purchase -l \n[\nproduct one, price one; \nproduct two, price; \n...\n]\n"
             + "You may omit the purchase time; in this case, I will save the dispatch time as the purchase time.\n"
         );
     }
@@ -94,8 +96,13 @@ export class CommandHandler {
             return;
         }
 
-        const purchases: Purchase[] = await Parser.parse(data);
-        await DataCollector.collect(purchases);
+        const purchase: Purchase = await Parser.parse(data);
+        try {
+            await this.dataProcessor.addPurchase(purchase);
+        } catch (e) {
+            console.log(e)
+            await this.messageSender.send(message.chat.id, "Your purchase was not added");
+        }
 
         await this.messageSender.send(message.chat.id, "Your purchase has been added");
     }
@@ -105,20 +112,12 @@ export class CommandHandler {
     }
 
     private async handleGetData(message: Message): Promise<void> {
-        const data: Purchase[] = await DataProcessor.createDataList();
+        const data: string = await this.dataProcessor.getLastPurchases(10);
 
+        console.log("Data obtained: [%s]", data);
         if (data.length > 0) {
             try {
-                let list: string = "Name | Price | Date \n";
-                for (const purchase of data) {
-                    list += purchase.name;
-                    list += " | "
-                    list += purchase.price;
-                    list += " | "
-                    list += purchase.date
-                    list += "\n";
-                }
-                await this.messageSender.send(message.chat.id, list);
+                await this.messageSender.send(message.chat.id, data);
             } catch (err) {
                 console.log(err);
             }

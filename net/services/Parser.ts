@@ -1,16 +1,12 @@
 import {Purchase} from "../Components/Purchase";
 
 export class Parser {
-    public static async parse(purchase: string): Promise<Purchase[]> {
-        const pur: Purchase[] = [];
-
+    public static async parse(purchase: string): Promise<Purchase> {
         if (purchase.startsWith("-l")) {
-            await this.parseList(purchase);
+            return await this.parseList(purchase);
         } else {
-            pur.push(await this.parseOne(purchase));
+            return await this.parseOne(purchase);
         }
-
-        return pur;
     }
 
     private static async parseOne(purchase: string): Promise<Purchase> {
@@ -26,7 +22,7 @@ export class Parser {
         return note;
     }
 
-    private static async parseList(purchases: string) {
-
+    private static async parseList(purchases: string): Promise<Purchase> {
+        return {} as Purchase;
     }
 }
