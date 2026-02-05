@@ -1,4 +1,4 @@
-import {COMMANDS} from "../config/Commands";
+import {Commands} from "../config/Commands";
 import TelegramBot, {BotCommand} from "node-telegram-bot-api";
 
 export class CommandService {
@@ -11,31 +11,31 @@ export class CommandService {
 
     public async setCommandsList(): Promise<void>  {
         this.commands.push({
-            command: COMMANDS.START,
+            command: Commands.start,
             description: "Launching the bot"
         });
         this.commands.push({
-            command: COMMANDS.REF,
+            command: Commands.ref,
             description: "Get a referral link"
         });
         this.commands.push({
-            command: COMMANDS.HELP,
+            command: Commands.help,
             description: "Supplementary information"
         });
         this.commands.push({
-            command: "/options",
+            command: Commands.options,
             description: "Show bot options"
         });
         this.commands.push({
-            command: "/purchase",
+            command: Commands.add,
             description: "Send me your purchase"
         });
         this.commands.push({
-            command: "/command_list_help",
+            command: Commands.commandList,
             description: "Information about commands"
         });
         this.commands.push({
-            command: "/get_data",
+            command: Commands.history,
             description: "Show your shopping list"
         });
 

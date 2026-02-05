@@ -1,5 +1,9 @@
-export const COMMANDS = {
-    START: "/start",
-    HELP: "/help",
-    REF: "/ref"
+export enum Commands {
+    start = "/start",
+    help = "/help",
+    ref = "/ref",
+    history = "/history",
+    add = "/add",
+    options = "/options",
+    commandList = "/command list"
 }
