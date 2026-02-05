@@ -1,5 +1,5 @@
 import {Collection, Db, DeleteResult, MongoClient, WithId} from "mongodb";
-import {Purchase} from "../Components/Purchase";
+import {Purchase} from "../models/Purchase";
 
 export class MongoService {
     private client: MongoClient;

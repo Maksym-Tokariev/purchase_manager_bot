@@ -4,22 +4,25 @@ import {CommandHandler} from "./CommandHandler";
 import {MessageHandler} from "./MessageHandler";
 import {MessageSender} from "./MessageSender";
 import {MongoService} from "./MongoService";
+import {Logger} from "../utils/Logger";
+import {getContext} from "../utils/Context";
 
 export class MessageListener {
     private bot: TelegramBot
     private commandHandler: CommandHandler;
     private messageHandler: MessageHandler;
     private readonly messageSender: MessageSender;
-    private mongo: MongoService;
 
-    constructor(bot: Bot, mongo: MongoService) {
+    constructor(
+        bot: Bot,
+        private mongo: MongoService
+    ) {
         this.bot = bot.getTelegramBot();
-        this.mongo = mongo;
         this.messageSender = new MessageSender(bot.getTelegramBot());
         this.commandHandler = new CommandHandler(this.messageSender, bot.getTelegramBot(), this.mongo);
         this.messageHandler = new MessageHandler(this.messageSender);
         this.listen();
-        console.log("MessageListener has been initialized");
+        Logger.info("MessageListener has been initialized", getContext(this));
     }
 
     private async listen(): Promise<void> {
@@ -32,7 +35,7 @@ export class MessageListener {
                 }
             });
         } catch (err) {
-            console.log("Message error: ", err)
+           Logger.error("Message error: ", getContext(this), err)
         }
     }
 }

@@ -1,33 +1,35 @@
 import TelegramBot, {BotCommand, Message} from "node-telegram-bot-api";
 import {CommandService} from "./CommandService";
 import {MessageSender} from "./MessageSender";
-import {Purchase} from "../Components/Purchase";
+import {Purchase} from "../models/Purchase";
 import {Parser} from "./Parser";
 import {MongoService} from "./MongoService";
 import {DataProcessor} from "./DataProcessor";
+import {Logger} from "../utils/Logger";
+import {getContext} from "../utils/Context";
 
 export class CommandHandler {
     private commandService: CommandService;
-    private readonly messageSender: MessageSender;
-    private bot: TelegramBot;
     private dataProcessor: DataProcessor;
     private commands: BotCommand[];
 
-    constructor(messageSender: MessageSender, bot: TelegramBot, mongo: MongoService) {
-        this.bot = bot;
+    constructor(
+        private readonly messageSender: MessageSender,
+        private bot: TelegramBot, mongo: MongoService
+    ) {
         this.dataProcessor = new DataProcessor(mongo);
         this.commandService = new CommandService(bot);
         this.commandService.setCommandsList()
-            .then(() => console.log("Commands have been set"));
+            .then(() => Logger.info("Commands have been set"));
         this.commands = this.commandService.getCommands();
-        this.messageSender = messageSender;
     }
 
     public async handle(message: Message): Promise<void> {
-        console.log(`Command from ${message.from?.username} : ${message.text}`);
-        const command: string = message.text!;
+        Logger.debug(`Command from ${message.from?.username} : ${message.text}`, getContext(this));
 
-        if (command.startsWith("/start"))
+        const command: string = message.text!.split(" ")[0];
+
+        if (command === "/start")
             await this.handleStart(message);
         else if (command === "/help")
             await this.handleHelp(message);
@@ -35,7 +37,7 @@ export class CommandHandler {
             await this.handleRef(message);
         else if (command === "/options")
             await this.HandleOptions(message);
-        else if (command.startsWith("/purchase"))
+        else if (command === "/purchase")
             await this.handlePurchase(message);
         else if (command === "/command_list_help")
             await this.handleCommandList(message);
@@ -89,7 +91,7 @@ export class CommandHandler {
         const data: string = message.text?.substring(9, message.text.length).trim()
             .replace(/^\[|\]$/g, "");
 
-        console.log(`Data : ${data}`);
+        Logger.debug("Data: ", getContext(this), data);
 
         if (data.length < 2) {
             await this.messageSender.send(message.chat.id, `You have not added any data.\nIt should be like this /purchase [bread, 4.65, ${new Date().toLocaleDateString()}]`);
@@ -100,7 +102,7 @@ export class CommandHandler {
         try {
             await this.dataProcessor.addPurchase(purchase);
         } catch (e) {
-            console.log(e)
+            Logger.error("Adding error: ", getContext(this), e);
             await this.messageSender.send(message.chat.id, "Your purchase was not added");
         }
 
@@ -114,12 +116,12 @@ export class CommandHandler {
     private async handleGetData(message: Message): Promise<void> {
         const data: string = await this.dataProcessor.getLastPurchases(10);
 
-        console.log("Data obtained: [%s]", data);
+        Logger.info("Data obtained: [%s]", data);
         if (data.length > 0) {
             try {
                 await this.messageSender.send(message.chat.id, data);
             } catch (err) {
-                console.log(err);
+                Logger.error("Message send error", getContext(this), err);
             }
         } else
             await this.messageSender.send(message.chat.id, "Your shopping list is empty.\nAdd purchases and try again");

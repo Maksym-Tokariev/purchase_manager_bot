@@ -1,5 +1,6 @@
 import * as dotenv from 'dotenv';
 import * as path from 'path';
+import {LOG_LEVEL} from "./Logging";
 
 dotenv.config({
     path: path.resolve(process.cwd(), '.env')
@@ -7,4 +8,14 @@ dotenv.config({
 
 export const config = {
     token: process.env.API_KEY_BOT || "",
+    mongo: {
+        uri: process.env.MONGO_URI || "mongodb://localhost:27017",
+        dbName: process.env.MONGO_DB_NAME || "PurchaseManager"
+    },
+    logging: {
+        level: LOG_LEVEL.DEBUG,
+        showTimestamp: true,
+        showLevel: true,
+        showContext: true
+    }
 };

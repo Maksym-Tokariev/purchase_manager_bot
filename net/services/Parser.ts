@@ -1,4 +1,4 @@
-import {Purchase} from "../Components/Purchase";
+import {Purchase} from "../models/Purchase";
 
 export class Parser {
     public static async parse(purchase: string): Promise<Purchase> {

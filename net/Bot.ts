@@ -2,6 +2,8 @@ import {config} from "./config/Config";
 import TelegramBot from "node-telegram-bot-api";
 import {MessageListener} from "./services/MessageListener";
 import {MongoService} from "./services/MongoService";
+import {Logger} from "./utils/Logger";
+import {getContext} from "./utils/Context";
 
 
 export class Bot {
@@ -11,9 +13,9 @@ export class Bot {
 
     public constructor() {
         this.bot = new TelegramBot(this.token, { polling: true });
-        this.mongo = new MongoService("mongodb://localhost:27017", "PurchaseManager");
+        this.mongo = new MongoService(config.mongo.uri, config.mongo.dbName);
         this.mongo.connect().then(() =>
-            console.log("Successful connection to the database")
+            Logger.info("Successful connection to the database", getContext(this))
         );
 
         this.initialize();
@@ -26,7 +28,7 @@ export class Bot {
 
     private setupErrorHandling(): void {
         this.bot.on("polling_error", (err: Error) => {
-            console.log(`Polling error: [${err}]`)
+            Logger.error(`Polling error: [${err}]`, getContext(this));
         })
     }
 
@@ -35,14 +37,14 @@ export class Bot {
     }
 
     public async start(): Promise<void> {
-        console.log('Bot started successfully!');
+        Logger.info('Bot started successfully!', getContext(this));
     }
 
     public async stop(): Promise<void> {
         if (this.bot.isPolling()) {
             await this.bot.stopPolling();
         }
-        console.log("Bot stopped");
+        Logger.info("Bot stopped", getContext(this));
     }
 
     public getTelegramBot(): TelegramBot {

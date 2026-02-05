@@ -1,4 +1,4 @@
-import {Purchase} from "../Components/Purchase";
+import {Purchase} from "../models/Purchase";
 import {MongoService} from "./MongoService";
 
 
