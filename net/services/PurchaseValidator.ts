@@ -1,0 +1,110 @@
+export class PurchaseValidator {
+    static validateName(name: string): { valid: boolean; error?: string } {
+        if (!name || name.trim().length === 0) {
+            return { valid: false, error: "The name cannot be empty" };
+        }
+
+        if (name.length > 100) {
+            return { valid: false, error: "The name is too long (max 100 characters)" };
+        }
+
+        if (/[<>{}[\]]/.test(name)) {
+            return { valid: false, error: "The name contains prohibited characters" };
+        }
+
+        return { valid: true };
+    }
+
+    static validatePrice(price: string): { valid: boolean; value?: number; error?: string } {
+        if (!price || price.trim().length === 0) {
+            return { valid: false, error: "The price cannot be empty" };
+        }
+
+        // Заменяем запятую на точку
+        const normalizedPrice = price.replace(',', '.');
+
+        const priceNum = parseFloat(normalizedPrice);
+        if (isNaN(priceNum)) {
+            return { valid: false, error: "The price must be a number" };
+        }
+
+        if (priceNum <= 0) {
+            return { valid: false, error: "The price must be greater then 0" };
+        }
+
+        if (priceNum > 1000000000) {
+            return { valid: false, error: "The price is too high" };
+        }
+
+        const roundedPrice = Math.round(priceNum * 100) / 100;
+
+        return { valid: true, value: roundedPrice };
+    }
+
+    static validateDate(dateStr: string): { valid: boolean; value?: Date; error?: string } {
+        if (!dateStr || dateStr.trim().length === 0) {
+            return { valid: false, error: "The date cannot be empty" };
+        }
+
+        if (dateStr.toLowerCase() === 'today') {
+            return { valid: true, value: new Date() };
+        }
+
+        if (dateStr.toLowerCase() === 'yesterday') {
+            const yesterday = new Date();
+            yesterday.setDate(yesterday.getDate() - 1);
+            return { valid: true, value: yesterday };
+        }
+
+        const formats = [
+            /^(\d{1,2})\.(\d{1,2})\.(\d{4})$/, // 31.12.2024
+            /^(\d{1,2})\.(\d{1,2})\.(\d{2})$/, // 31.12.24
+            /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/, // 31/12/2024
+            /^(\d{1,2})-(\d{1,2})-(\d{4})$/, // 31-12-2024
+            /^(\d{4})-(\d{1,2})-(\d{1,2})$/, // 2024-12-31
+        ];
+
+        for (const format of formats) {
+            const match = dateStr.match(format);
+            if (match) {
+                let day, month, year;
+
+                if (format === formats[4]) {
+                    year = parseInt(match[1]);
+                    month = parseInt(match[2]) - 1;
+                    day = parseInt(match[3]);
+                } else {
+                    day = parseInt(match[1]);
+                    month = parseInt(match[2]) - 1;
+                    year = parseInt(match[3]);
+
+                    if (year < 100) {
+                        year += 2000;
+                    }
+                }
+
+                const date = new Date(year, month, day);
+
+                if (
+                    date.getFullYear() === year &&
+                    date.getMonth() === month &&
+                    date.getDate() === day
+                ) {
+                    if (date > new Date()) {
+                        return { valid: false, error: "The date cannot be in future" };
+                    }
+
+                    const minDate = new Date();
+                    minDate.setFullYear(minDate.getFullYear() - 10);
+                    if (date < minDate) {
+                        return { valid: false, error: "The date is too old" };
+                    }
+
+                    return { valid: true, value: date };
+                }
+            }
+        }
+
+        return { valid: false, error: "Incorrect date format. Choose dd.mm.yyyy" };
+    }
+}

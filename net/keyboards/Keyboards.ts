@@ -1,0 +1,52 @@
+import {InlineKeyboardButton, KeyboardButton} from "node-telegram-bot-api";
+
+export class Keyboards {
+    static getCancelKeyboard(): KeyboardButton[][] {
+        return [[{text: "❌ Undo"}]];
+    }
+
+    static getDateKeyboard(): KeyboardButton[][] {
+        return [
+            [
+                {text: "Today"},
+                {text: "Yesterday"}
+            ],
+            [
+                {text: "Select date"}
+            ],
+            [
+                {text: "❌ Cancel"}
+            ]
+        ]
+    }
+
+    static getConfirmationInlineKeyboard(purchaseId?: number): InlineKeyboardButton[][] {
+        return [
+            [
+                {text: "✅ Save", callback_data: `purchase_confirm_${purchaseId || 'new'}`},
+                { text: "✏️ Edit", callback_data: "purchase_edit" }
+            ],
+            [
+                { text: "🗑️ Cancel", callback_data: "purchase_cancel" },
+                { text: "➕ Add more", callback_data: "purchase_add_more" }
+            ]
+        ]
+    }
+
+    static getEditInlineKeyboard(): InlineKeyboardButton[][] {
+        return [
+            [
+                { text: "✏️ Name", callback_data: "edit_name" },
+                { text: "💰 Price", callback_data: "edit_price" }
+            ],
+            [
+                { text: "📅 Date", callback_data: "edit_date" },
+                { text: "🏷️ Tag", callback_data: "edit_tag" }
+            ],
+            [
+                { text: "✅ Save", callback_data: "edit_done" },
+                { text: "❌ Undo", callback_data: "edit_cancel" }
+            ]
+        ];
+    }
+}
