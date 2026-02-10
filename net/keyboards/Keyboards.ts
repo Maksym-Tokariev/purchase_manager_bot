@@ -1,8 +1,12 @@
-import {InlineKeyboardButton, KeyboardButton} from "node-telegram-bot-api";
+import {InlineKeyboardButton, InlineKeyboardMarkup, KeyboardButton} from "node-telegram-bot-api";
 
 export class Keyboards {
     static getCancelKeyboard(): KeyboardButton[][] {
         return [[{text: "❌ Undo"}]];
+    }
+
+    static getCommandListButtons(): InlineKeyboardButton[][] {
+        return [[{text: "Check commands", callback_data: "command_list"}]]
     }
 
     static getDateKeyboard(): KeyboardButton[][] {

@@ -8,6 +8,7 @@ import {Logger} from "../utils/Logger";
 import {getContext} from "../utils/Context";
 import {Formatter} from "../utils/Formatter";
 import {PurchaseFlowService} from "./PurchaseFlowService";
+import {Keyboards} from "../keyboards/Keyboards";
 
 export class CommandHandler {
     private commandService: CommandService;
@@ -40,12 +41,12 @@ export class CommandHandler {
             await this.handleRef(message);
         else if (command === "/options")
             await this.HandleOptions(message);
-        else if (command === "/purchase")
+        else if (command === "/add")
             await this.handlePurchase(message);
         else if (command === "/command_list_help")
             await this.handleCommandList(message);
-        else if (command === "/get_data")
-            await this.handleGetData(message);
+        else if (command === "/history")
+            await this.handleHistory(message);
         else
             await this.commandNotFound(message);
     }
@@ -65,9 +66,7 @@ export class CommandHandler {
 
     private async handleHelp(message: Message): Promise<void> {
         await this.messageSender.send(message.chat.id,
-            "Send purchase detail using this template: \n/purchase [product name, price, date as dd.MM.yyyy(optional)]\n"
-            + "You can also send me list for example: /purchase -l \n[\nproduct one, price one; \nproduct two, price; \n...\n]\n"
-            + "You may omit the purchase time; in this case, I will save the dispatch time as the purchase time.\n"
+            "Send purchase detail using /add, next follow the instruction"
         );
     }
 
@@ -77,8 +76,10 @@ export class CommandHandler {
     }
 
     private async commandNotFound(message: Message): Promise<void> {
-        await this.messageSender.send(message.chat.id,
-            `Command ${message.text} not found. \n You can view the available commands by typing /command_list_help`);
+        await this.bot.sendMessage(message.chat.id,
+            `Command ${message.text} not found. \n You can view the available commands by typing /command_list_help`, {
+            reply_markup: {inline_keyboard: Keyboards.getCommandListButtons()}
+        });
     }
 
     private async HandleOptions(message: Message): Promise<void> {
@@ -111,21 +112,21 @@ export class CommandHandler {
 
         await this.purchaseFlowService.startPurchaseFlow(userId, chatId);
 
-        try {
-            await this.dataProcessor.addPurchase({} as Purchase);
-        } catch (e) {
-            Logger.error("Adding error: ", getContext(this), e);
-            await this.messageSender.send(message.chat.id, "Your purchase was not added");
-        }
-
-        await this.messageSender.send(message.chat.id, "Your purchase has been added");
+        // try {
+        //     await this.dataProcessor.addPurchase({} as Purchase);
+        // } catch (e) {
+        //     Logger.error("Adding error: ", getContext(this), e);
+        //     await this.messageSender.send(message.chat.id, "Your purchase was not added");
+        // }
+        //
+        // await this.messageSender.send(message.chat.id, "Your purchase has been added");
     }
 
     private async handleCommandList(message: Message): Promise<void> {
         await this.messageSender.send(message.chat.id, "The command is not ready yet");
     }
 
-    private async handleGetData(message: Message): Promise<void> {
+    private async handleHistory(message: Message): Promise<void> {
         const data: string = await this.dataProcessor.getLastPurchases(10);
 
         Logger.info("Data obtained: [%s]", data);

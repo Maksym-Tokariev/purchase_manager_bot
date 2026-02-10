@@ -18,6 +18,14 @@ export class MessageSender {
         }
     }
 
+    public async sendWithKeyboard(chatId: any, arg: any, keyboard: any): Promise<void> {
+        try {
+            await this.bot.sendMessage(chatId, arg, keyboard);
+        } catch (err) {
+            Logger.error("Error send message: ", getContext(this), err);
+        }
+    }
+
     public async sendStepMessage(userId: number, chatId: number, step: PurchaseStep): Promise<void> {
         switch (step) {
             case PurchaseStep.NAME:
