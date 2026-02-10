@@ -1,7 +1,6 @@
-import TelegramBot, {BotCommand, Message} from "node-telegram-bot-api";
+import TelegramBot, {Message} from "node-telegram-bot-api";
 import {CommandService} from "./CommandService";
 import {MessageSender} from "./MessageSender";
-import {Purchase} from "../models/Purchase";
 import {MongoService} from "./MongoService";
 import {DataProcessor} from "./DataProcessor";
 import {Logger} from "../utils/Logger";

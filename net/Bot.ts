@@ -1,19 +1,22 @@
 import {config} from "./config/Config";
 import TelegramBot from "node-telegram-bot-api";
-import {MessageListener} from "./services/MessageListener";
+import {InputListener} from "./services/InputListener";
 import {MongoService} from "./services/MongoService";
 import {Logger} from "./utils/Logger";
 import {getContext} from "./utils/Context";
+import {ServiceContainer} from "./services/ServiceContainer";
 
 
 export class Bot {
     private token: string = config.token;
     private readonly bot: TelegramBot;
     private readonly mongo: MongoService;
+    private readonly serviceContainer: ServiceContainer;
 
     public constructor() {
         this.bot = new TelegramBot(this.token, { polling: true });
         this.mongo = new MongoService(config.mongo.uri, config.mongo.dbName);
+        this.serviceContainer = new ServiceContainer(this, this.mongo);
         this.mongo.connect().then(() =>
             Logger.info("Successful connection to the database", getContext(this))
         );
@@ -40,7 +43,8 @@ export class Bot {
     }
 
     private setupMessageListener(): void {
-        new MessageListener(this, this.mongo);
+        const listener = new InputListener(this.serviceContainer);
+        listener.listen();
     }
 
     public async start(): Promise<void> {
