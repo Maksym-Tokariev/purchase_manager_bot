@@ -3,5 +3,6 @@ export enum PurchaseStep {
     NAME = 'name',
     PRICE = 'price',
     DATE = 'date',
-    CONFIRM = 'confirm'
+    CONFIRM = 'confirm',
+    WAITING = 'waiting'
 }

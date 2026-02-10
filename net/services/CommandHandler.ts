@@ -2,26 +2,29 @@ import TelegramBot, {BotCommand, Message} from "node-telegram-bot-api";
 import {CommandService} from "./CommandService";
 import {MessageSender} from "./MessageSender";
 import {Purchase} from "../models/Purchase";
-import {Parser} from "./Parser";
 import {MongoService} from "./MongoService";
 import {DataProcessor} from "./DataProcessor";
 import {Logger} from "../utils/Logger";
 import {getContext} from "../utils/Context";
+import {Formatter} from "../utils/Formatter";
+import {PurchaseFlowService} from "./PurchaseFlowService";
 
 export class CommandHandler {
     private commandService: CommandService;
     private dataProcessor: DataProcessor;
-    private commands: BotCommand[];
 
     constructor(
         private readonly messageSender: MessageSender,
-        private bot: TelegramBot, mongo: MongoService
+        private bot: TelegramBot,
+        private purchaseFlowService: PurchaseFlowService,
+        mongo: MongoService
     ) {
         this.dataProcessor = new DataProcessor(mongo);
         this.commandService = new CommandService(bot);
         this.commandService.setCommandsList()
-            .then(() => Logger.info("Commands have been set"));
-        this.commands = this.commandService.getCommands();
+            .then(() => Logger.info("Commands have been set",getContext(this)))
+            .catch(err => Logger.error("Error installing commands", getContext(this), err.message));
+        Logger.debug("Command handler was initialized", getContext(this));
     }
 
     public async handle(message: Message): Promise<void> {
@@ -83,24 +86,33 @@ export class CommandHandler {
     }
 
     private async handlePurchase(message: Message): Promise<void> {
+        const chatId: number | undefined = message ? message.chat.id : undefined;
+        const userId: number | undefined = message ? message.from?.id : undefined;
+
+        if (!chatId || !userId) {
+            Logger.error("Chat or user id is undefined: ", getContext(this), {userId, chatId});
+            return;
+        }
+
         if (!message.text) {
             await this.messageSender.send(message.chat.id, "Empty value");
             return;
         }
 
-        const data: string = message.text?.substring(9, message.text.length).trim()
-            .replace(/^\[|\]$/g, "");
+        const input: string = Formatter.stripCommand(message.text);
 
-        Logger.debug("Data: ", getContext(this), data);
+        Logger.debug("Data: ", getContext(this), input);
 
-        if (data.length < 2) {
-            await this.messageSender.send(message.chat.id, `You have not added any data.\nIt should be like this /purchase [bread, 4.65, ${new Date().toLocaleDateString()}]`);
+        if (input.length < 2) {
+            await this.messageSender.send(message.chat.id,
+                `You have not added any data.\nIt should be like this /purchase [bread, 4.65, ${new Date().toLocaleDateString()}]`);
             return;
         }
 
-        const purchase: Purchase = await Parser.parse(data);
+        await this.purchaseFlowService.startPurchaseFlow(userId, chatId);
+
         try {
-            await this.dataProcessor.addPurchase(purchase);
+            await this.dataProcessor.addPurchase({} as Purchase);
         } catch (e) {
             Logger.error("Adding error: ", getContext(this), e);
             await this.messageSender.send(message.chat.id, "Your purchase was not added");

@@ -2,17 +2,19 @@ import TelegramBot from "node-telegram-bot-api";
 import {StateManager} from "./StateManager";
 import {PurchaseStep} from "../models/PurchaseStep";
 import {StepHandler} from "./StepHandler";
+import {MessageSender} from "./MessageSender";
 
 export class PurchaseFlowService {
     constructor(
         private bot: TelegramBot,
+        private messageSender: MessageSender,
         private stateManager: StateManager,
         private stepHandler: StepHandler
     ) {}
 
     async startPurchaseFlow(userId: number, chatId: number): Promise<void> {
         this.stateManager.startFlow(userId, chatId);
-        await this.sendStepMessage(userId, PurchaseStep.NAME);
+        await this.messageSender.sendStepMessage(userId, chatId, PurchaseStep.NAME);
     }
 
     async handleUserMessage(userId: number, text: string): Promise<void> {
@@ -22,25 +24,16 @@ export class PurchaseFlowService {
 
         switch (state.currentStep) {
             case PurchaseStep.NAME:
-                await this.stepHandler.handleName(userId, text);
+                await this.stepHandler.handleName(userId, text, state);
                 break;
             case PurchaseStep.PRICE:
-                await this.stepHandler.handlePrice(userId, text);
+                await this.stepHandler.handlePrice(userId, text, state);
                 break;
             case PurchaseStep.DATE:
-                await this.stepHandler.handleDate(userId, text);
+                await this.stepHandler.handleDate(userId, text, state);
                 break;
             default:
-                await this.stepHandler.setIdle(userId);
-        }
-    }
-
-    private async sendStepMessage(userId: number, step: PurchaseStep): Promise<void> {
-        switch (step) {
-            case PurchaseStep.NAME:
-            case PurchaseStep.PRICE:
-            case PurchaseStep.DATE:
-            case PurchaseStep.CONFIRM:
+                await this.stepHandler.setIdle(userId, state);
         }
     }
 }

@@ -22,8 +22,15 @@ export class Bot {
     }
 
     private initialize(): void {
-        this.setupErrorHandling();
-        this.setupMessageListener();
+        Logger.debug("Start initializing", getContext(this));
+        try {
+            this.setupErrorHandling();
+            this.setupMessageListener();
+            Logger.debug("Successful initialization", getContext(this))
+        } catch (err) {
+            Logger.error("Initializing error: ", getContext(this), err);
+            this.stop();
+        }
     }
 
     private setupErrorHandling(): void {

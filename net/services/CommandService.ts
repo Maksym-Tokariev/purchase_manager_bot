@@ -1,5 +1,7 @@
 import {Commands} from "../config/Commands";
 import TelegramBot, {BotCommand} from "node-telegram-bot-api";
+import {Logger} from "../utils/Logger";
+import {getContext} from "../utils/Context";
 
 export class CommandService {
     private bot: TelegramBot;
@@ -10,6 +12,7 @@ export class CommandService {
     }
 
     public async setCommandsList(): Promise<void>  {
+        Logger.debug("Command initialization", getContext(this));
         this.commands.push({
             command: Commands.start,
             description: "Launching the bot"
@@ -39,7 +42,11 @@ export class CommandService {
             description: "Show your shopping list"
         });
 
-        await this.bot.setMyCommands(this.commands);
+        try {
+            await this.bot.setMyCommands(this.commands);
+        } catch (err: any) {
+            throw Error(err);
+        }
     }
 
     public getCommands(): BotCommand[] {
