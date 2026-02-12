@@ -4,5 +4,4 @@ export enum PurchaseStep {
     PRICE = 'price',
     DATE = 'date',
     CONFIRM = 'confirm',
-    WAITING = 'waiting'
 }

@@ -18,7 +18,7 @@ export class MessageRouter {
             }
         } else if (msg.from?.id && msg.text) {
             try {
-                void this.purchaseFlowService.handleUserMessage(msg.from?.id, msg.text);
+                void this.purchaseFlowService.handleUserMessage(msg.from?.id, msg.chat.id, msg.text);
             } catch (err) {
                 Logger.error("An error occurred while handling the message:", getContext(this), msg);
             }

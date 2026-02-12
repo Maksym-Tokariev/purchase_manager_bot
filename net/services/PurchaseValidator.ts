@@ -20,7 +20,6 @@ export class PurchaseValidator {
             return { valid: false, error: "The price cannot be empty" };
         }
 
-        // Заменяем запятую на точку
         const normalizedPrice = price.replace(',', '.');
 
         const priceNum = parseFloat(normalizedPrice);

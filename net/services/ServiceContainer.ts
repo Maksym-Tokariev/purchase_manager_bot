@@ -23,7 +23,7 @@ export class ServiceContainer {
         this._bot = bot.getTelegramBot();
         this._messageSender = new MessageSender(this._bot);
         this._stateManager = new StateManager();
-        this._stepHandler = new StepHandler();
+        this._stepHandler = new StepHandler(this._messageSender);
         this._purchaseFlowService = new PurchaseFlowService(this._bot, this._messageSender, this._stateManager, this._stepHandler);
         this._commandHandler = new CommandHandler(this._messageSender, this._bot, this._purchaseFlowService, this._mongo);
         this._queryHandler = new QueryHandler(this._bot);

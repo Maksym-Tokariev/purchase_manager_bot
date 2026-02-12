@@ -24,10 +24,10 @@ export class Keyboards {
         ]
     }
 
-    static getConfirmationInlineKeyboard(purchaseId?: number): InlineKeyboardButton[][] {
+    static getConfirmationInlineKeyboard(purchaseId?: string): InlineKeyboardButton[][] {
         return [
             [
-                {text: "✅ Save", callback_data: `purchase_confirm_${purchaseId || 'new'}`},
+                {text: "✅ Save", callback_data: `purchase_confirm`},
                 { text: "✏️ Edit", callback_data: "purchase_edit" }
             ],
             [

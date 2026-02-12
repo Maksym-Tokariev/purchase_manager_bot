@@ -11,7 +11,9 @@ export class InputListener {
 
     public async listen(): Promise<void> {
         Logger.debug("Start listening", getContext(this));
-        this.serviceContainer.bot.on('message', (msg) => this.serviceContainer.msgRouter.route(msg));
-        this.serviceContainer.bot.on("callback_query", (query) => void this.serviceContainer.queryHandler.handle(query));
+        this.serviceContainer.bot.on('message',
+            (msg) => this.serviceContainer.msgRouter.route(msg));
+        this.serviceContainer.bot.on("callback_query",
+            (query) => void this.serviceContainer.queryHandler.handle(query));
     }
 }

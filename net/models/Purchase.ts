@@ -3,4 +3,7 @@ export interface Purchase {
     price: string;
     date?: string;
     tag?: string;
+    userId?: number;
+    chatId?: number;
+    purchaseId?: string;
 }

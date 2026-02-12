@@ -3,6 +3,8 @@ import {PurchaseStep} from "../models/PurchaseStep";
 import {Logger} from "../utils/Logger";
 import {getContext} from "../utils/Context";
 import {Keyboards} from "../keyboards/Keyboards";
+import {PurchaseState} from "../models/PurchaseState";
+import {generatePurchaseId} from "../utils/IDGenerator";
 
 export class MessageSender {
 
@@ -26,14 +28,33 @@ export class MessageSender {
         }
     }
 
-    public async sendStepMessage(userId: number, chatId: number, step: PurchaseStep): Promise<void> {
+    public async sendStepMessage(userId: number, chatId: number, step: PurchaseStep, input?: PurchaseState): Promise<void> {
         switch (step) {
             case PurchaseStep.NAME:
-                await this.bot.sendMessage(chatId, "Let's create a purchaser! Enter the name of the purchase and then we will continue.");
+                await this.bot.sendMessage(chatId, "Let's create a purchaser! Enter the name of the purchase and then we will continue");
                 break;
             case PurchaseStep.PRICE:
+                await this.bot.sendMessage(chatId, "Good, next I need to know the purchase price");
+                break;
             case PurchaseStep.DATE:
+                await this.bot.sendMessage(chatId, "Great, now I need to know the date of purchase", {
+                    reply_markup: {
+                        keyboard: Keyboards.getDateKeyboard(),
+                        resize_keyboard: true,
+                        one_time_keyboard: true
+                    },
+                });
+                break;
             case PurchaseStep.CONFIRM:
+                await this.bot.sendMessage(chatId,
+                    `Good, I got all of them, Check that they are correct:\n ${input?.data.name}\n ${input?.data.price}\n ${input?.data.date?.toLocaleDateString()}`,
+                    {
+                        reply_markup: {
+                            inline_keyboard: Keyboards.getConfirmationInlineKeyboard(generatePurchaseId(userId))
+                        }
+                    }
+                )
+                break;
         }
     }
 }

@@ -101,8 +101,6 @@ export class CommandHandler {
 
         const input: string = Formatter.stripCommand(message.text);
 
-        Logger.debug("Data: ", getContext(this), input);
-
         if (input.length < 2) {
             await this.messageSender.send(message.chat.id,
                 `You have not added any data.\nIt should be like this /purchase [bread, 4.65, ${new Date().toLocaleDateString()}]`);
@@ -126,16 +124,20 @@ export class CommandHandler {
     }
 
     private async handleHistory(message: Message): Promise<void> {
-        const data: string = await this.dataProcessor.getLastPurchases(10);
+        try {
+            const data: string = await this.dataProcessor.getLastPurchases(10);
 
-        Logger.info("Data obtained: [%s]", data);
-        if (data.length > 0) {
-            try {
-                await this.messageSender.send(message.chat.id, data);
-            } catch (err) {
-                Logger.error("Message send error", getContext(this), err);
-            }
-        } else
-            await this.messageSender.send(message.chat.id, "Your shopping list is empty.\nAdd purchases and try again");
+            Logger.info("Data obtained", data);
+            if (data.length > 0) {
+                try {
+                    await this.messageSender.send(message.chat.id, data);
+                } catch (err) {
+                    Logger.error("Message send error", getContext(this), err);
+                }
+            } else
+                await this.messageSender.send(message.chat.id, "Your shopping list is empty.\nAdd purchases and try again");
+        } catch (err: any) {
+            Logger.error("Handle history error:", getContext(this), err);
+        }
     }
 }
