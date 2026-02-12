@@ -1,5 +1,6 @@
 import {Purchase} from "../models/Purchase";
 import {MongoService} from "./MongoService";
+import {PurchaseState} from "../models/PurchaseState";
 
 
 export class DataProcessor {

@@ -2,6 +2,7 @@ import {Collection, Db, DeleteResult, MongoClient, WithId} from "mongodb";
 import {Purchase} from "../models/Purchase";
 import {Logger} from "../utils/Logger";
 import {getContext} from "../utils/Context";
+import {PurchaseState} from "../models/PurchaseState";
 
 export class MongoService {
     private client: MongoClient;

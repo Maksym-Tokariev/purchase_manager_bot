@@ -8,6 +8,7 @@ import {CommandHandler} from "./CommandHandler";
 import {QueryHandler} from "./QueryHandler";
 import {MessageRouter} from "./MessageRouter";
 import TelegramBot from "node-telegram-bot-api";
+import {DataProcessor} from "./DataProcessor";
 
 export class ServiceContainer {
     private readonly _bot: TelegramBot;
@@ -18,15 +19,17 @@ export class ServiceContainer {
     private readonly _commandHandler: CommandHandler
     private readonly _queryHandler: QueryHandler;
     private readonly _msgRouter: MessageRouter;
+    private readonly _dataProcessor: DataProcessor;
 
     constructor(bot: Bot, private _mongo: MongoService) {
         this._bot = bot.getTelegramBot();
         this._messageSender = new MessageSender(this._bot);
+        this._dataProcessor = new DataProcessor(this._mongo);
         this._stateManager = new StateManager();
         this._stepHandler = new StepHandler(this._messageSender);
         this._purchaseFlowService = new PurchaseFlowService(this._bot, this._messageSender, this._stateManager, this._stepHandler);
-        this._commandHandler = new CommandHandler(this._messageSender, this._bot, this._purchaseFlowService, this._mongo);
-        this._queryHandler = new QueryHandler(this._bot);
+        this._commandHandler = new CommandHandler(this._messageSender, this._bot, this._purchaseFlowService, this._dataProcessor);
+        this._queryHandler = new QueryHandler(this._bot, this._dataProcessor, this._stateManager);
         this._msgRouter = new MessageRouter(this._commandHandler, this._purchaseFlowService);
     }
 
@@ -65,5 +68,9 @@ export class ServiceContainer {
 
     get mongo(): MongoService {
         return this._mongo;
+    }
+
+    get dataProcessor(): DataProcessor {
+        return this._dataProcessor;
     }
 }

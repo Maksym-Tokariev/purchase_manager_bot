@@ -50,7 +50,7 @@ export class MessageSender {
                     `Good, I got all of them, Check that they are correct:\n ${input?.data.name}\n ${input?.data.price}\n ${input?.data.date?.toLocaleDateString()}`,
                     {
                         reply_markup: {
-                            inline_keyboard: Keyboards.getConfirmationInlineKeyboard(generatePurchaseId(userId))
+                            inline_keyboard: Keyboards.getConfirmationInlineKeyboard(userId)
                         }
                     }
                 )

@@ -2,6 +2,8 @@ import {PurchaseState} from "../models/PurchaseState";
 import {PurchaseStep} from "../models/PurchaseStep";
 import {Logger} from "../utils/Logger";
 import {getContext} from "../utils/Context";
+import {Purchase} from "../models/Purchase";
+import {Formatter} from "../utils/Formatter";
 
 export class StateManager {
     private states: Map<number, PurchaseState> = new Map();
@@ -34,10 +36,12 @@ export class StateManager {
         if (state) state.data = {...state.data, ...data};
     }
 
-    completeFlow(userId: number, chatId: number): PurchaseState['data'] | null {
+    completeFlow(userId: number, chatId: number): Purchase | null {
         const state = this.states.get(userId);
+
         if (!state) return null;
-        const data = state.data;
+
+        const data = Formatter.toPurchase(state);
 
         this.clearState(userId, chatId);
 
@@ -55,7 +59,7 @@ export class StateManager {
         this.states.set(userId, {
             userId: userId,
             chatId: chatId,
-            currentStep: PurchaseStep.NAME,
+            currentStep: PurchaseStep.IDLE,
             data: {}
         });
     }

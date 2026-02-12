@@ -1,7 +1,7 @@
 export interface Purchase {
     name: string;
-    price: string;
-    date?: string;
+    price: number;
+    date?: Date;
     tag?: string;
     userId?: number;
     chatId?: number;

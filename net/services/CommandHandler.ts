@@ -1,7 +1,6 @@
 import TelegramBot, {Message} from "node-telegram-bot-api";
 import {CommandService} from "./CommandService";
 import {MessageSender} from "./MessageSender";
-import {MongoService} from "./MongoService";
 import {DataProcessor} from "./DataProcessor";
 import {Logger} from "../utils/Logger";
 import {getContext} from "../utils/Context";
@@ -11,15 +10,14 @@ import {Keyboards} from "../keyboards/Keyboards";
 
 export class CommandHandler {
     private commandService: CommandService;
-    private dataProcessor: DataProcessor;
 
     constructor(
         private readonly messageSender: MessageSender,
         private bot: TelegramBot,
         private purchaseFlowService: PurchaseFlowService,
-        mongo: MongoService
+        private dataProcessor: DataProcessor
     ) {
-        this.dataProcessor = new DataProcessor(mongo);
+
         this.commandService = new CommandService(bot);
         this.commandService.setCommandsList()
             .then(() => Logger.info("Commands have been set",getContext(this)))
