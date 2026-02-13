@@ -24,10 +24,9 @@ export class QueryHandler {
             const messageId = query.message.message_id;
             const queryData = query.data;
             const queryId = query.id;
+            const userId = query.from.id;
 
             Logger.debug("Query received", getContext(this), queryData)
-
-            Logger.debug(`${queryData?.includes("purchase_confirm")}`);
 
             if (queryData?.includes("purchase_confirm")) {
                 await this.handleConfirm(chatId, messageId, queryData, queryId);
@@ -40,6 +39,7 @@ export class QueryHandler {
                 case "purchase_edit":
                     break;
                 case "purchase_cancel":
+                    await this.handleCancel(chatId, messageId, userId, queryId);
                     break;
                 case "purchase_add_more":
                     break;
@@ -94,5 +94,12 @@ export class QueryHandler {
 
     private async answer(queryId: string): Promise<void> {
         await this.bot.answerCallbackQuery(queryId);
+    }
+
+    private async handleCancel(chatId: number, messageId: number, userId: number, queryId: string) {
+        this.stateManager.cancelFlow(userId, chatId);
+
+        await this.bot.editMessageText("The addition has been canceled", {chat_id: chatId, message_id: messageId});
+        await this.answer(queryId);
     }
 }

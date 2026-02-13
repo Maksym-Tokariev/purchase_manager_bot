@@ -24,10 +24,16 @@ export class Keyboards {
         ]
     }
 
+    static getCancel(): InlineKeyboardButton[][] {
+        return [
+            [ { text: "🗑️ Cancel", callback_data: "purchase_cancel" } ]
+        ]
+    }
+
     static getConfirmationInlineKeyboard(userId: number): InlineKeyboardButton[][] {
         return [
             [
-                {text: "✅ Save", callback_data: `purchase_confirm:${userId}`},
+                { text: "✅ Save", callback_data: `purchase_confirm:${userId}` },
                 { text: "✏️ Edit", callback_data: "purchase_edit" }
             ],
             [
