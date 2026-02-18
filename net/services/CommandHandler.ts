@@ -75,7 +75,7 @@ export class CommandHandler {
     private async commandNotFound(message: Message): Promise<void> {
         await this.bot.sendMessage(message.chat.id,
             `Command ${message.text} not found. \n You can view the available commands by typing /command_list_help`, {
-            reply_markup: {inline_keyboard: Keyboards.getCommandListButtons()}
+            reply_markup: Keyboards.getCommandListButtons()
         });
     }
 

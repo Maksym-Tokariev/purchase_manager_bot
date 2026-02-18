@@ -28,34 +28,24 @@ export class MessageSender {
         switch (step) {
             case PurchaseStep.NAME:
                 await this.bot.sendMessage(chatId, "Let's create a purchaser! Enter the name of the purchase and then we will continue", {
-                    reply_markup: {
-                        inline_keyboard: Keyboards.getCancel()
-                    }
+                    reply_markup: Keyboards.getCancelKeyboard()
                 });
                 break;
             case PurchaseStep.PRICE:
                 await this.bot.sendMessage(chatId, "Good, next I need to know the purchase price", {
-                    reply_markup: {
-                        inline_keyboard: Keyboards.getCancel()
-                    }
+                    reply_markup: Keyboards.getCancelKeyboard()
                 });
                 break;
             case PurchaseStep.DATE:
                 await this.bot.sendMessage(chatId, "Great, now I need to know the date of purchase", {
-                    reply_markup: {
-                        keyboard: Keyboards.getDateKeyboard(),
-                        resize_keyboard: true,
-                        one_time_keyboard: true
-                    },
+                    reply_markup: Keyboards.getDateKeyboard()
                 });
                 break;
             case PurchaseStep.CONFIRM:
                 await this.bot.sendMessage(chatId,
-                    `Good, I got all of them, Check that they are correct:\n ${input?.data.name}\n ${input?.data.price}\n ${input?.data.date?.toLocaleDateString()}`,
-                    {
-                        reply_markup: {
-                            inline_keyboard: Keyboards.getConfirmationInlineKeyboard(userId)
-                        }
+                    `Good, I got all of them, Check that they are correct:\n 
+                    ${input?.data.name}\n ${input?.data.price}\n ${input?.data.date?.toLocaleDateString()}`, {
+                        reply_markup: Keyboards.getConfirmationInlineKeyboard(userId)
                     }
                 )
                 break;

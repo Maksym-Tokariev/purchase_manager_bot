@@ -107,9 +107,8 @@ export class QueryHandler {
 
     private async handleAddCategory(chatId: number, userId: number, queryId: string): Promise<void> {
         await this.bot.sendMessage(chatId, "You can add a category to the purchase, and I'll group your purchases by category in further analysis. Enter category", {
-            reply_markup: {
-                inline_keyboard: Keyboards.getAddCategoryKeyboard()
-            }
+            reply_markup: Keyboards.getAddCategoryKeyboard()
+
         });
     }
 }

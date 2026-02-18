@@ -13,31 +13,31 @@ export class CommandService {
     public async setCommandsList(): Promise<void>  {
         Logger.debug(this, "Command initialization");
         this.commands.push({
-            command: Commands.start,
+            command: Commands.START,
             description: "Launching the bot"
         });
         this.commands.push({
-            command: Commands.ref,
+            command: Commands.REF,
             description: "Get a referral link"
         });
         this.commands.push({
-            command: Commands.help,
+            command: Commands.HELP,
             description: "Supplementary information"
         });
         this.commands.push({
-            command: Commands.options,
+            command: Commands.OPTIONS,
             description: "Show bot options"
         });
         this.commands.push({
-            command: Commands.add,
+            command: Commands.ADD,
             description: "Send me your purchase"
         });
         this.commands.push({
-            command: Commands.commandList,
+            command: Commands.COMMAND_LIST,
             description: "Information about commands"
         });
         this.commands.push({
-            command: Commands.history,
+            command: Commands.HISTORY,
             description: "Show your shopping list"
         });
 
