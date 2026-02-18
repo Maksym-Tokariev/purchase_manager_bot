@@ -15,7 +15,9 @@
     "dotenv": "^17.2.3",
     "mongodb": "^7.0.0",
     "node": "^25.5.0",
-    "node-telegram-bot-api": "^0.67.0"
+    "node-telegram-bot-api": "^0.67.0",
+    "winston": "^3.19.0",
+    "winston-daily-rotate-file": "^5.0.0"
   },
   "compilerOptions": {
     "module": "ESNext",

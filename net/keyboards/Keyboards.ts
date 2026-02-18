@@ -1,10 +1,6 @@
 import {InlineKeyboardButton, InlineKeyboardMarkup, KeyboardButton} from "node-telegram-bot-api";
 
 export class Keyboards {
-    static getCancelKeyboard(): KeyboardButton[][] {
-        return [[{text: "❌ Undo"}]];
-    }
-
     static getCommandListButtons(): InlineKeyboardButton[][] {
         return [[{text: "Check commands", callback_data: "command_list"}]]
     }
@@ -30,6 +26,12 @@ export class Keyboards {
         ]
     }
 
+    static getAddCategoryKeyboard(): InlineKeyboardButton[][] {
+        return [
+            [ { text: "🗑️ Cancel", callback_data: "cancel_category" } ]
+        ]
+    }
+
     static getConfirmationInlineKeyboard(userId: number): InlineKeyboardButton[][] {
         return [
             [
@@ -38,7 +40,7 @@ export class Keyboards {
             ],
             [
                 { text: "🗑️ Cancel", callback_data: "purchase_cancel" },
-                { text: "➕ Add more", callback_data: "purchase_add_more" }
+                { text: "➕ Add category", callback_data: "purchase_add_category" }
             ]
         ]
     }

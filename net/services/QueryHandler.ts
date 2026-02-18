@@ -5,6 +5,7 @@ import {DataProcessor} from "./DataProcessor";
 import {Formatter} from "../utils/Formatter";
 import {StateManager} from "./StateManager";
 import {Purchase} from "../models/Purchase";
+import {Keyboards} from "../keyboards/Keyboards";
 
 export class QueryHandler {
 
@@ -12,8 +13,7 @@ export class QueryHandler {
         private bot: TelegramBot,
         private dataProcessor: DataProcessor,
         private stateManager: StateManager
-    ) {
-    }
+    ) {}
 
     async handle(query: CallbackQuery): Promise<void> {
         try {
@@ -41,11 +41,10 @@ export class QueryHandler {
                 case "purchase_cancel":
                     await this.handleCancel(chatId, messageId, userId, queryId);
                     break;
-                case "purchase_add_more":
+                case "purchase_add_category":
+                    await this.handleAddCategory(chatId, userId, queryId);
                     break;
             }
-
-
         } catch (err) {
             Logger.error("An error occurred while handling the callback", getContext(this), query.message);
         }
@@ -88,7 +87,11 @@ export class QueryHandler {
             await this.bot.sendMessage(chatId, "There is en error, please try again");
         }
 
-        await this.bot.sendMessage(chatId, "I added the purchase");
+        await this.bot.editMessageText("✅ I added the purchase", {
+            chat_id: chatId,
+            message_id: messageId
+        });
+
         await this.answer(queryId);
     }
 
@@ -96,10 +99,17 @@ export class QueryHandler {
         await this.bot.answerCallbackQuery(queryId);
     }
 
-    private async handleCancel(chatId: number, messageId: number, userId: number, queryId: string) {
+    private async handleCancel(chatId: number, messageId: number, userId: number, queryId: string): Promise<void> {
         this.stateManager.cancelFlow(userId, chatId);
-
         await this.bot.editMessageText("The addition has been canceled", {chat_id: chatId, message_id: messageId});
         await this.answer(queryId);
+    }
+
+    private async handleAddCategory(chatId: number, userId: number, queryId: string): Promise<void> {
+        await this.bot.sendMessage(chatId, "You can add a category to the purchase, and I'll group your purchases by category in further analysis. Enter category", {
+            reply_markup: {
+                inline_keyboard: Keyboards.getAddCategoryKeyboard()
+            }
+        });
     }
 }
