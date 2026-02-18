@@ -1,7 +1,6 @@
 import {PurchaseState} from "../models/PurchaseState";
 import {PurchaseStep} from "../models/PurchaseStep";
 import {Logger} from "../utils/Logger";
-import {getContext} from "../utils/Context";
 import {Purchase} from "../models/Purchase";
 import {Formatter} from "../utils/Formatter";
 
@@ -45,13 +44,13 @@ export class StateManager {
 
         this.clearState(userId, chatId);
 
-        Logger.debug("Flow completed for user: ", getContext(this), userId);
+        Logger.debug(this, "Flow completed for user:", userId);
         return data;
     }
 
     cancelFlow(userId: number, chatId: number): void {
         this.clearState(userId, chatId);
-        Logger.debug("Flow cancelled for user: ", getContext(this), userId);
+        Logger.debug(this, "Flow cancelled for user:", userId);
     }
 
 

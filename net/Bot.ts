@@ -3,7 +3,6 @@ import TelegramBot from "node-telegram-bot-api";
 import {InputListener} from "./services/InputListener";
 import {MongoService} from "./services/MongoService";
 import {Logger} from "./utils/Logger";
-import {getContext} from "./utils/Context";
 import {ServiceContainer} from "./services/ServiceContainer";
 
 
@@ -18,27 +17,27 @@ export class Bot {
         this.mongo = new MongoService(config.mongo.uri, config.mongo.dbName);
         this.serviceContainer = new ServiceContainer(this, this.mongo);
         this.mongo.connect().then(() =>
-            Logger.info("Successful connection to the database", getContext(this))
+            Logger.info(this, "Successful connection to the database")
         );
 
         this.initialize();
     }
 
     private initialize(): void {
-        Logger.debug("Start initializing", getContext(this));
+        Logger.debug(this, "Start initializing");
         try {
             this.setupErrorHandling();
             this.setupMessageListener();
-            Logger.debug("Successful initialization", getContext(this))
+            Logger.debug(this, "Successful initialization")
         } catch (err) {
-            Logger.error("Initializing error: ", getContext(this), err);
+            Logger.error(this, "Initializing error: ");
             this.stop();
         }
     }
 
     private setupErrorHandling(): void {
         this.bot.on("polling_error", (err: Error) => {
-            Logger.error(`Polling error: [${err}]`, getContext(this));
+            Logger.error(this, `Polling error: [${err}]`);
         })
     }
 
@@ -48,14 +47,14 @@ export class Bot {
     }
 
     public async start(): Promise<void> {
-        Logger.info('Bot started successfully!', getContext(this));
+        Logger.info(this, 'Bot started successfully!');
     }
 
     public async stop(): Promise<void> {
         if (this.bot.isPolling()) {
             await this.bot.stopPolling();
         }
-        Logger.info("Bot stopped", getContext(this));
+        Logger.info(this, "Bot stopped");
     }
 
     public getTelegramBot(): TelegramBot {

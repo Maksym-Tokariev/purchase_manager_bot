@@ -1,5 +1,6 @@
 import {LOG_LEVEL, LOG_LEVELS, LogLevel} from "../config/Logging";
 import {config} from "../config/Config";
+import {getContext} from "./Context";
 
 export class Logger {
     private static readonly level: LogLevel = config.logging.level;
@@ -23,8 +24,9 @@ export class Logger {
         return LOG_LEVELS[level] >= LOG_LEVELS[this.level];
     }
 
-    public static debug(message: string, context?: string, data?: any): void {
+    public static debug(obj: any, message: string, data?: any): void {
         if (this.shouldLog(LOG_LEVEL.DEBUG)) {
+            const context: string = getContext(obj);
             const formatted = this.formatMessage(LOG_LEVEL.DEBUG, message, context);
             if (data) {
                 console.debug(formatted, data);
@@ -34,8 +36,9 @@ export class Logger {
         }
     }
 
-    public static info(message: string, context?: string, data?: any,): void {
+    public static info(obj: any, message: string, data?: any,): void {
         if (this.shouldLog(LOG_LEVEL.INFO)) {
+            const context: string = getContext(obj);
             const formatted = this.formatMessage(LOG_LEVEL.INFO, message, context);
             if (data) {
                 console.info(formatted, data);
@@ -45,8 +48,9 @@ export class Logger {
         }
     }
 
-    public static warn(message: string, context?: string, data?: any): void {
+    public static warn(obj: any, message: string, data?: any): void {
         if (this.shouldLog(LOG_LEVEL.WARN)) {
+            const context: string = getContext(obj);
             const formatted: string = this.formatMessage(LOG_LEVEL.WARN, message, context);
             if (data) {
                 console.warn(formatted, data);
@@ -56,8 +60,9 @@ export class Logger {
         }
     }
 
-    public static error(message: string, context?: string, data?: any): void {
+    public static error(obj: any, message: string, data?: any): void {
         if (this.shouldLog(LOG_LEVEL.ERROR)) {
+            const context: string = getContext(obj);
             const formatted: string = this.formatMessage(LOG_LEVEL.ERROR, message, context);
             if (data) {
                 console.error(formatted, data);

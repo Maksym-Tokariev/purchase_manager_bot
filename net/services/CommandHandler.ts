@@ -20,13 +20,13 @@ export class CommandHandler {
 
         this.commandService = new CommandService(bot);
         this.commandService.setCommandsList()
-            .then(() => Logger.info("Commands have been set",getContext(this)))
-            .catch(err => Logger.error("Error installing commands", getContext(this), err.message));
-        Logger.debug("Command handler was initialized", getContext(this));
+            .then(() => Logger.info(this, "Commands have been set"))
+            .catch(err => Logger.error(this, "Error installing commands", err.message));
+        Logger.debug(this, "Command handler was initialized");
     }
 
     public async handle(message: Message): Promise<void> {
-        Logger.debug(`Command from ${message.from?.username} : ${message.text}`, getContext(this));
+        Logger.debug(this, `Command from ${message.from?.username} : ${message.text}`);
 
         const command: string = message.text!.split(" ")[0];
 
@@ -88,7 +88,7 @@ export class CommandHandler {
         const userId: number | undefined = message ? message.from?.id : undefined;
 
         if (!chatId || !userId) {
-            Logger.error("Chat or user id is undefined: ", getContext(this), {userId, chatId});
+            Logger.error(this, "Chat or user id is undefined: ", {userId, chatId});
             return;
         }
 
@@ -106,15 +106,6 @@ export class CommandHandler {
         }
 
         await this.purchaseFlowService.startPurchaseFlow(userId, chatId);
-
-        // try {
-        //     await this.dataProcessor.addPurchase({} as Purchase);
-        // } catch (e) {
-        //     Logger.error("Adding error: ", getContext(this), e);
-        //     await this.messageSender.send(message.chat.id, "Your purchase was not added");
-        // }
-        //
-        // await this.messageSender.send(message.chat.id, "Your purchase has been added");
     }
 
     private async handleCommandList(message: Message): Promise<void> {
@@ -125,7 +116,7 @@ export class CommandHandler {
         try {
             const data: string = await this.dataProcessor.getLastPurchases(10);
 
-            Logger.info("Data obtained", data);
+            Logger.info(this, "Data obtained", data);
             if (data.length > 0) {
                 try {
                     await this.messageSender.send(message.chat.id, data);
@@ -135,7 +126,7 @@ export class CommandHandler {
             } else
                 await this.messageSender.send(message.chat.id, "Your shopping list is empty.\nAdd purchases and try again");
         } catch (err: any) {
-            Logger.error("Handle history error:", getContext(this), err);
+            Logger.error(this, "Handle history error:", err);
         }
     }
 }

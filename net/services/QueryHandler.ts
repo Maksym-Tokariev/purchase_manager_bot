@@ -26,7 +26,7 @@ export class QueryHandler {
             const queryId = query.id;
             const userId = query.from.id;
 
-            Logger.debug("Query received", getContext(this), queryData)
+            Logger.debug(this, "Query received", queryData)
 
             if (queryData?.includes("purchase_confirm")) {
                 await this.handleConfirm(chatId, messageId, queryData, queryId);
@@ -46,7 +46,7 @@ export class QueryHandler {
                     break;
             }
         } catch (err) {
-            Logger.error("An error occurred while handling the callback", getContext(this), query.message);
+            Logger.error(this, "An error occurred while handling the callback", query.message);
         }
     }
 
@@ -65,17 +65,17 @@ export class QueryHandler {
     private async handleConfirm(chatId: number, messageId: number, queryData: string, queryId: string) {
         const userId: number = Formatter.getUserId(queryData);
 
-        Logger.debug(`${userId}`, getContext(this));
+        Logger.debug(this, `${userId}`);
 
         if (userId === 0) {
-            Logger.warn("User id is 0", getContext(this));
+            Logger.warn(this, "User id is 0");
             await this.bot.sendMessage(chatId, "I'm so sorry, I have a problem. Try again later");
             return;
         }
         
         const purchase: Purchase | null = this.stateManager.completeFlow(userId, chatId);
         if (!purchase) {
-            Logger.warn("State is undefined", getContext(this));
+            Logger.warn(this, "State is undefined");
             await this.bot.sendMessage(chatId, "I'm so sorry, I have a problem. Try again later");
             return;
         }
@@ -83,7 +83,7 @@ export class QueryHandler {
         try {
             await this.dataProcessor.addPurchase(purchase);
         } catch (err) {
-            Logger.error("A purchase saving error", getContext(this), err);
+            Logger.error(this, "A purchase saving error", err);
             await this.bot.sendMessage(chatId, "There is en error, please try again");
         }
 

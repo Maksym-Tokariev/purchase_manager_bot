@@ -1,5 +1,6 @@
 import {Message} from "node-telegram-bot-api";
 import {MessageSender} from "./MessageSender";
+import {Logger} from "../utils/Logger";
 
 export class MessageHandler {
 
@@ -8,6 +9,6 @@ export class MessageHandler {
     }
 
     public async handle(message: Message): Promise<void> {
-        console.log(`Message from ${message.from?.username} : ${message.text}`);
+      Logger.debug(this, `Message from ${message.from?.username} : ${message.text}`);
     }
 }

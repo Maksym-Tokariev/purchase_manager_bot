@@ -1,6 +1,6 @@
 import {Purchase} from "../models/Purchase";
 import {MongoService} from "./MongoService";
-import {PurchaseState} from "../models/PurchaseState";
+import {Logger} from "../utils/Logger";
 
 
 export class DataProcessor {
@@ -14,7 +14,7 @@ export class DataProcessor {
         try {
             await this.mongo.insert(purchase);
         } catch (err) {
-            console.log("Error adding purchase: ", purchase);
+            Logger.error(this, "Error adding purchase:", purchase);
             throw err;
         }
     }

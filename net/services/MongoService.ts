@@ -1,8 +1,6 @@
 import {Collection, Db, DeleteResult, MongoClient, WithId} from "mongodb";
 import {Purchase} from "../models/Purchase";
 import {Logger} from "../utils/Logger";
-import {getContext} from "../utils/Context";
-import {PurchaseState} from "../models/PurchaseState";
 
 export class MongoService {
     private client: MongoClient;
@@ -18,16 +16,16 @@ export class MongoService {
             await this.client.connect();
             this.db = this.client.db(this.dbName);
             this.purchases = this.db.collection<Purchase>("purchases");
-            Logger.info("Connect to db:", getContext(this), this.dbName);
+            Logger.info(this, "Connect to db:", this.dbName);
         } catch (err) {
-            Logger.error("Db connection error: ", getContext(this), err);
+            Logger.error(this, "Db connection error: ", err);
             throw err;
         }
     }
 
     public async disconnect(): Promise<void> {
         await this.client.close();
-        Logger.info("Connected has been closed", getContext(this));
+        Logger.info(this, "Connected has been closed");
     }
 
     public async insert(purchase: Purchase): Promise<void> {

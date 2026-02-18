@@ -1,10 +1,8 @@
 import {PurchaseState} from "../models/PurchaseState";
 import {PurchaseStep} from "../models/PurchaseStep";
 import {MessageSender} from "./MessageSender";
-import {parseInteger} from "mongodb/src/utils";
-import {PurchaseValidator} from "./PurchaseValidator";
+import {PurchaseValidator} from "../utils/PurchaseValidator";
 import {Logger} from "../utils/Logger";
-import {getContext} from "../utils/Context";
 
 export class StepHandler {
 
@@ -46,7 +44,7 @@ export class StepHandler {
         const date = PurchaseValidator.validateDate(text);
 
         if (date.error) {
-            Logger.error("Date validation error:", getContext(this), date.error);
+            Logger.error(this, "Date validation error:", date.error);
             await this.msgSender.send(chatId, "Invalid date, please try enter date again");
         }
 

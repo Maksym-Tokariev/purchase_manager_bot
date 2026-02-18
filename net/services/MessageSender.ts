@@ -1,10 +1,8 @@
 import TelegramBot from "node-telegram-bot-api";
 import {PurchaseStep} from "../models/PurchaseStep";
 import {Logger} from "../utils/Logger";
-import {getContext} from "../utils/Context";
 import {Keyboards} from "../keyboards/Keyboards";
 import {PurchaseState} from "../models/PurchaseState";
-import {generatePurchaseId} from "../utils/IDGenerator";
 
 export class MessageSender {
 
@@ -16,7 +14,7 @@ export class MessageSender {
         try {
             await this.bot.sendMessage(chatId, arg);
         } catch (err) {
-            Logger.error("Error send message: ", getContext(this), err);
+            Logger.error(this, "Error send message: ", err);
         }
     }
 
@@ -24,7 +22,7 @@ export class MessageSender {
         try {
             await this.bot.sendMessage(chatId, arg, keyboard);
         } catch (err) {
-            Logger.error("Error send message: ", getContext(this), err);
+            Logger.error(this, "Error send message: ", err);
         }
     }
 
