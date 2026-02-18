@@ -6,9 +6,7 @@ import {PurchaseState} from "../models/PurchaseState";
 
 export class MessageSender {
 
-    constructor(private readonly bot: TelegramBot) {
-        this.bot = bot;
-    }
+    constructor(private readonly bot: TelegramBot) {}
 
     public async send(chatId: any, arg: any): Promise<void> {
         try {

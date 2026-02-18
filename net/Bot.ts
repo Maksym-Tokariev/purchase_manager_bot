@@ -1,24 +1,16 @@
 import {config} from "./config/Config";
 import TelegramBot from "node-telegram-bot-api";
-import {InputListener} from "./services/InputListener";
-import {MongoService} from "./services/MongoService";
 import {Logger} from "./utils/Logger";
-import {ServiceContainer} from "./services/ServiceContainer";
+import {ServiceContainer} from "./utils/ServiceContainer";
 
 
 export class Bot {
-    private token: string = config.token;
     private readonly bot: TelegramBot;
-    private readonly mongo: MongoService;
-    private readonly serviceContainer: ServiceContainer;
+    private readonly container: ServiceContainer;
 
     public constructor() {
-        this.bot = new TelegramBot(this.token, { polling: true });
-        this.mongo = new MongoService(config.mongo.uri, config.mongo.dbName);
-        this.serviceContainer = new ServiceContainer(this, this.mongo);
-        this.mongo.connect().then(() =>
-            Logger.info(this, "Successful connection to the database")
-        );
+        this.bot = new TelegramBot(config.token, { polling: true });
+        this.container = new ServiceContainer(this);
 
         this.initialize();
     }
@@ -42,12 +34,12 @@ export class Bot {
     }
 
     private setupMessageListener(): void {
-        const listener = new InputListener(this.serviceContainer);
-        listener.listen();
+        this.container.listener.listen();
     }
 
     public async start(): Promise<void> {
         Logger.info(this, 'Bot started successfully!');
+        await this.container.mongo.connect();
     }
 
     public async stop(): Promise<void> {
@@ -55,6 +47,7 @@ export class Bot {
             await this.bot.stopPolling();
         }
         Logger.info(this, "Bot stopped");
+        await this.container.mongo.disconnect();
     }
 
     public getTelegramBot(): TelegramBot {
