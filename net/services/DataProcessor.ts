@@ -22,6 +22,14 @@ export class DataProcessor {
         }
     }
 
+    public async deletePurchase(purchaseId: string): Promise<void> {
+        try {
+            await this.mongo.delete(purchaseId);
+        } catch (err: any) {
+            Logger.error(this, err.message, err.stack);
+        }
+    }
+
     public async getLastPurchases(limit: number): Promise<PurchaseDTO[]> {
         if (!this.mongo.getPurchases() || this.mongo.getPurchases() === undefined) throw new Error("No purchases collection");
         const data = await this.mongo.getPurchases()!
@@ -37,16 +45,8 @@ export class DataProcessor {
 
         purchases.forEach(element => {
             const date: DateFormate = Formatter.date(element.date);
-            let value: string = ""
+            let value: string = `${element.name} | ${element.price} | ${date.value}`;
             let purchase: PurchaseDTO = {} as PurchaseDTO;
-
-
-            value += element.name;
-            value += " | "
-            value += element.price;
-            value += " | ";
-            value += date.value;
-            value += "\n";
 
             if (!element.purchaseId) {
                 Logger.warn(this, "Purchase without id", element)
