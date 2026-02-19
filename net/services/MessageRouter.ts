@@ -1,8 +1,6 @@
 import {Message} from "node-telegram-bot-api";
 import {Logger} from "../utils/Logger";
-import {getContext} from "../utils/Context";
 import {CommandHandler} from "./CommandHandler";
-import {PurchaseFlowService} from "./PurchaseFlowService";
 import {MessageHandler} from "./MessageHandler";
 
 export class MessageRouter {

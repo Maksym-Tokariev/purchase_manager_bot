@@ -1,9 +1,7 @@
 import TelegramBot, {Message} from "node-telegram-bot-api";
 import {CommandService} from "./CommandService";
-import {MessageSender} from "./MessageSender";
 import {DataProcessor} from "./DataProcessor";
 import {Logger} from "../utils/Logger";
-import {getContext} from "../utils/Context";
 import {Formatter} from "../utils/Formatter";
 import {PurchaseFlowService} from "./PurchaseFlowService";
 import {Keyboards} from "../keyboards/Keyboards";
@@ -121,7 +119,7 @@ export class CommandHandler {
                 try {
                     await this.bot.sendMessage(message.chat.id, data);
                 } catch (err) {
-                    Logger.error("Message send error", getContext(this), err);
+                    Logger.error(this,"Message send error", err);
                 }
             } else
                 await this.bot.sendMessage(message.chat.id, "Your shopping list is empty.\nAdd purchases and try again");

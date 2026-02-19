@@ -1,6 +1,5 @@
 import TelegramBot, {CallbackQuery} from "node-telegram-bot-api";
 import {Logger} from "../utils/Logger";
-import {getContext} from "../utils/Context";
 import {DataProcessor} from "./DataProcessor";
 import {Formatter} from "../utils/Formatter";
 import {StateManager} from "./StateManager";
