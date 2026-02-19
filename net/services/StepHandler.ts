@@ -6,7 +6,7 @@ import {Logger} from "../utils/Logger";
 
 export class StepHandler {
 
-    constructor(private msgSender: MessageSender) {}
+    constructor(private sender: MessageSender) {}
 
     async handleName(userId: number, chatId: number, text: string, state: PurchaseState): Promise<void> {
         if (!chatId || !text) return;
@@ -17,24 +17,24 @@ export class StepHandler {
             state.data.name = text;
             state.currentStep = PurchaseStep.PRICE;
 
-            await this.msgSender.sendStepMessage(userId, chatId, state.currentStep);
+            await this.sender.sendStepMessage(userId, chatId, state.currentStep);
         } else {
-            await this.msgSender.send(chatId, `Invalid name: [${name.error}]`);
+            await this.sender.send(chatId, `Invalid name: [${name.error}]`);
         }
     }
 
     async handlePrice(userId: number, chatId: number, text: string, state: PurchaseState): Promise<void> {
         if (!chatId || !text) return;
-
         const price = PurchaseValidator.validatePrice(text);
 
         if (price.valid) {
+
             state.data.price = price.value!;
             state.currentStep = PurchaseStep.DATE;
 
-            await this.msgSender.sendStepMessage(userId, chatId, state.currentStep);
+            await this.sender.sendStepMessage(userId, chatId, state.currentStep);
         } else {
-            await this.msgSender.send(chatId, `Invalid price: [${price.error}]`);
+            await this.sender.send(chatId, `Invalid price: [${price.error}]`);
         }
     }
 
@@ -45,16 +45,16 @@ export class StepHandler {
 
         if (date.error) {
             Logger.error(this, "Date validation error:", date.error);
-            await this.msgSender.send(chatId, "Invalid date, please try enter date again");
+            await this.sender.send(chatId, "Invalid date, please try enter date again");
         }
 
         if (date.valid) {
             state.data.date = date.value;
             state.currentStep = PurchaseStep.CONFIRM;
 
-            await this.msgSender.sendStepMessage(userId, chatId, state.currentStep, state);
+            await this.sender.sendStepMessage(userId, chatId, state.currentStep, state);
         } else {
-            await this.msgSender.send(chatId, `Invalid date [${date.error}]`);
+            await this.sender.send(chatId, `Invalid date [${date.error}]`);
         }
     }
 

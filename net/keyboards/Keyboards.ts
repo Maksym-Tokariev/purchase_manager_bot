@@ -1,20 +1,17 @@
+import {Buttons} from "./Buttons";
+
 export class Keyboards {
     static getCommandListButtons() {
         return {
-          inline_keyboard: [[{text: "Check commands", callback_data: "command_list"}]]
+          inline_keyboard: [[Buttons.commands]]
         };
     }
 
     static getDateKeyboard() {
         return {
           inline_keyboard: [
-              [
-                  {text: "Today", callback_data: "today"},
-                  {text: "Yesterday", callback_data: "yesterday"}
-              ],
-              [
-                  {text: "🗑️ Cancel"}
-              ]
+              [ Buttons.today, Buttons.yesterday ],
+              [ Buttons.cancelPurchase ]
           ]
         };
     }
@@ -22,15 +19,15 @@ export class Keyboards {
     static getCancelKeyboard() {
         return {
             inline_keyboard: [
-                [ { text: "🗑️ Cancel", callback_data: "purchase_cancel" } ]
+                [ Buttons.cancelPurchase ]
             ]
-        }
+        };
     }
 
     static getAddCategoryKeyboard() {
         return {
-            inline_keyboard: [[ { text: "🗑️ Cancel", callback_data: "cancel_category" } ]]
-        }
+            inline_keyboard: [[ Buttons.cancelCategory ]]
+        };
     }
 
     static getConfirmationInlineKeyboard(userId: number) {
@@ -45,7 +42,7 @@ export class Keyboards {
                     { text: "➕ Add category", callback_data: "purchase_add_category" }
                 ]
             ]
-        }
+        };
     }
 
     static getEditInlineKeyboard() {

@@ -3,9 +3,13 @@ import {Logger} from "../utils/Logger";
 import {getContext} from "../utils/Context";
 import {CommandHandler} from "./CommandHandler";
 import {PurchaseFlowService} from "./PurchaseFlowService";
+import {MessageHandler} from "./MessageHandler";
 
 export class MessageRouter {
-    constructor(private commandHandler: CommandHandler, private purchaseFlowService: PurchaseFlowService) {}
+    constructor(
+        private commandHandler: CommandHandler,
+        private message: MessageHandler
+    ) {}
 
     public async route(msg: Message) {
         if (msg.text && msg.text.startsWith("/")) {
@@ -16,9 +20,9 @@ export class MessageRouter {
             }
         } else if (msg.from?.id && msg.text) {
             try {
-                void this.purchaseFlowService.handleUserMessage(msg.from?.id, msg.chat.id, msg.text);
-            } catch (err) {
-                Logger.error(this, "An error occurred while handling the message:", msg);
+                void this.message.handle(msg.from?.id, msg.chat.id, msg.text);
+            } catch (err: any) {
+                Logger.error(this, `An error occurred while handling the message: ${msg}`, err.message);
             }
         }
     }

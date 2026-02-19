@@ -11,6 +11,7 @@ import TelegramBot from "node-telegram-bot-api";
 import {DataProcessor} from "../services/DataProcessor";
 import {config} from "../config/Config";
 import {InputListener} from "../services/InputListener";
+import {MessageHandler} from "../services/MessageHandler";
 
 export class ServiceContainer {
     private readonly bot: TelegramBot;
@@ -24,6 +25,7 @@ export class ServiceContainer {
     private readonly query: QueryHandler;
     private readonly router: MessageRouter;
     private readonly data: DataProcessor;
+    private readonly msgHandler: MessageHandler;
 
     constructor(bot: Bot) {
         this.bot = bot.getTelegramBot();
@@ -32,10 +34,11 @@ export class ServiceContainer {
         this.data = new DataProcessor(this.mongoService);
         this.state = new StateManager();
         this.step = new StepHandler(this.sender);
-        this.flow = new PurchaseFlowService(this.bot, this.sender, this.state, this.step);
-        this.command = new CommandHandler(this.sender, this.bot, this.flow, this.data);
+        this.flow = new PurchaseFlowService(this.bot, this.sender, this.state);
+        this.command = new CommandHandler(this.bot, this.flow, this.data);
         this.query = new QueryHandler(this.bot, this.data, this.state);
-        this.router = new MessageRouter(this.command, this.flow);
+        this.msgHandler = new MessageHandler(this.state, this.step);
+        this.router = new MessageRouter(this.command, this.msgHandler);
         this.inputListener = new InputListener(this.bot, this.router, this.query);
     }
 

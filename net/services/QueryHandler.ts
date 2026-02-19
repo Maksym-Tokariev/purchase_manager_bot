@@ -65,7 +65,7 @@ export class QueryHandler {
     private async handleConfirm(chatId: number, messageId: number, queryData: string, queryId: string) {
         const userId: number = Formatter.getUserId(queryData);
 
-        Logger.debug(this, `${userId}`);
+        Logger.debug(this, `UserId : ${userId}, queryId : ${queryId}`);
 
         if (userId === 0) {
             Logger.warn(this, "User id is 0");

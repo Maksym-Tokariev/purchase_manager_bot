@@ -1,14 +1,34 @@
-import {Message} from "node-telegram-bot-api";
-import {MessageSender} from "./MessageSender";
-import {Logger} from "../utils/Logger";
+import {PurchaseStep} from "../models/PurchaseStep";
+import {StateManager} from "./StateManager";
+import {StepHandler} from "./StepHandler";
 
 export class MessageHandler {
 
-    constructor(messageSender: MessageSender) {
+    constructor(
+        private stateManager: StateManager,
+        private stepHandler: StepHandler
+    ) {}
 
-    }
+    async handle(userId: number, chatId: number, text: string): Promise<void> {
+        const state = this.stateManager.getCurrState(userId);
 
-    public async handle(message: Message): Promise<void> {
-      Logger.debug(this, `Message from ${message.from?.username} : ${message.text}`);
+        if (!state) return;
+
+        switch (state.currentStep) {
+            case PurchaseStep.NAME:
+                await this.stepHandler.handleName(userId, chatId, text, state);
+                break;
+            case PurchaseStep.PRICE:
+                await this.stepHandler.handlePrice(userId, chatId, text, state);
+                break;
+            case PurchaseStep.DATE:
+                await this.stepHandler.handleDate(userId, chatId, text, state);
+                break;
+            case PurchaseStep.CONFIRM:
+                await this.stepHandler.handleConfirm(userId, chatId, text, state);
+                break;
+            default:
+                await this.stepHandler.setIdle(userId, state);
+        }
     }
 }
