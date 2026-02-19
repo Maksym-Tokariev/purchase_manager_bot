@@ -1,6 +1,7 @@
 import {PurchaseState} from "../models/PurchaseState";
 import {Purchase} from "../models/Purchase";
 import {generatePurchaseId} from "./IDGenerator";
+import {DateFormate} from "../errors/DateFormate";
 
 export class Formatter {
 
@@ -34,6 +35,24 @@ export class Formatter {
             userId: state.userId,
             chatId: state.chatId,
             purchaseId: generatePurchaseId(state.userId)
+        }
+    }
+
+    public static date(date: Date | undefined): DateFormate {
+        if (!date) {
+            return {
+                value: date,
+                error: "Date is invalid or undefined"
+            }
+        }
+
+        const day: string = String(date.getDay()).padStart(2, "0");
+        const month: string = String(date.getMonth() + 1).padStart(2, "0");
+        const year: string = String(date.getFullYear());
+
+        return {
+            value: `${day}.${month}.${year}`,
+            error: null
         }
     }
 }

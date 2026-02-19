@@ -46,8 +46,8 @@ export class PurchaseValidator {
         }
 
         if (dateStr.toLowerCase() === 'today') {
-            const now = new Date();
-            return { valid: true, value: new Date(now.getDay(), now.getMonth(), now.getFullYear()) };
+
+            return { valid: true, value: new Date() };
         }
 
         if (dateStr.toLowerCase() === 'yesterday') {

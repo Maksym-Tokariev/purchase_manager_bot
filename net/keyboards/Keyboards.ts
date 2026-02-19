@@ -1,6 +1,15 @@
 import {Buttons} from "./Buttons";
 
 export class Keyboards {
+
+    static getPurchaseOptionKeyboard(purchaseId: string) {
+        return {
+            inline_keyboard: [
+                [Buttons.editPurchase(purchaseId), Buttons.deletePurchase(purchaseId)]
+            ]
+        }
+    }
+
     static getCommandListButtons() {
         return {
           inline_keyboard: [[Buttons.commands]]

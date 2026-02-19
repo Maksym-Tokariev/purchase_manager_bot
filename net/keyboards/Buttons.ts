@@ -20,4 +20,11 @@ export class Buttons {
         return {text: "Check commands", callback_data: "command_list"};
     }
 
+    public static deletePurchase(purchaseId: string) {
+        return { text: "Delete", callback_data: `delete:${purchaseId}` }
+    }
+
+    public static editPurchase(purchaseId: string) {
+        return { text: "Edit", callback_data: `edit:${purchaseId}` }
+    }
 }

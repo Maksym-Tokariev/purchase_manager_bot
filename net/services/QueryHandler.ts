@@ -5,13 +5,15 @@ import {Formatter} from "../utils/Formatter";
 import {StateManager} from "./StateManager";
 import {Purchase} from "../models/Purchase";
 import {Keyboards} from "../keyboards/Keyboards";
+import {MessageHandler} from "./MessageHandler";
 
 export class QueryHandler {
 
     constructor(
         private bot: TelegramBot,
         private dataProcessor: DataProcessor,
-        private stateManager: StateManager
+        private state: StateManager,
+        private message: MessageHandler
     ) {}
 
     async handle(query: CallbackQuery): Promise<void> {
@@ -43,6 +45,10 @@ export class QueryHandler {
                 case "purchase_add_category":
                     await this.handleAddCategory(chatId, userId, queryId);
                     break;
+                case "today":
+                case "yesterday":
+                    await this.handleDate(chatId, userId, queryId, queryData);
+
             }
         } catch (err) {
             Logger.error(this, "An error occurred while handling the callback", query.message);
@@ -58,7 +64,7 @@ export class QueryHandler {
                 message_id: messageId,
             });
 
-        await this.answer(queryId);
+        void this.answer(queryId);
     }
 
     private async handleConfirm(chatId: number, messageId: number, queryData: string, queryId: string) {
@@ -72,7 +78,7 @@ export class QueryHandler {
             return;
         }
         
-        const purchase: Purchase | null = this.stateManager.completeFlow(userId, chatId);
+        const purchase: Purchase | null = this.state.completeFlow(userId, chatId);
         if (!purchase) {
             Logger.warn(this, "State is undefined");
             await this.bot.sendMessage(chatId, "I'm so sorry, I have a problem. Try again later");
@@ -91,7 +97,7 @@ export class QueryHandler {
             message_id: messageId
         });
 
-        await this.answer(queryId);
+        void this.answer(queryId);
     }
 
     private async answer(queryId: string): Promise<void> {
@@ -99,9 +105,13 @@ export class QueryHandler {
     }
 
     private async handleCancel(chatId: number, messageId: number, userId: number, queryId: string): Promise<void> {
-        this.stateManager.cancelFlow(userId, chatId);
+        if (queryId && !this.state.isInFlow(userId)) {
+            void this.answer(queryId);
+            return;
+        }
+        this.state.cancelFlow(userId, chatId);
         await this.bot.editMessageText("The addition has been canceled", {chat_id: chatId, message_id: messageId});
-        await this.answer(queryId);
+        void this.answer(queryId);
     }
 
     private async handleAddCategory(chatId: number, userId: number, queryId: string): Promise<void> {
@@ -109,5 +119,10 @@ export class QueryHandler {
             reply_markup: Keyboards.getAddCategoryKeyboard()
 
         });
+    }
+
+    private async handleDate(chatId: number, userId: number, queryId: string, queryData: string) {
+        await this.message.handle(userId, chatId, queryData);
+        void this.answer(queryId);
     }
 }

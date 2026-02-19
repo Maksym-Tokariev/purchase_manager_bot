@@ -1,6 +1,9 @@
 import {Purchase} from "../models/Purchase";
 import {MongoService} from "./MongoService";
 import {Logger} from "../utils/Logger";
+import {Formatter} from "../utils/Formatter";
+import {DateFormate} from "../errors/DateFormate";
+import {PurchaseDTO} from "../models/PurchaseDTO";
 
 
 export class DataProcessor {
@@ -19,8 +22,8 @@ export class DataProcessor {
         }
     }
 
-    public async getLastPurchases(limit: number): Promise<string> {
-        if (!this.mongo.getPurchases()) throw new Error("No purchases collection");
+    public async getLastPurchases(limit: number): Promise<PurchaseDTO[]> {
+        if (!this.mongo.getPurchases() || this.mongo.getPurchases() === undefined) throw new Error("No purchases collection");
         const data = await this.mongo.getPurchases()!
             .find({})
             .sort({_id: -1})
@@ -29,21 +32,33 @@ export class DataProcessor {
         return await this.convertPurchasesToString(data);
     }
 
-    private async convertPurchasesToString(purchases: Purchase[]): Promise<string> {
-        let list: string = "Name | Price | Date\n";
+    private async convertPurchasesToString(purchases: Purchase[]): Promise<PurchaseDTO[]> {
+         const list: PurchaseDTO[] = [];
 
-        purchases.forEach(pur => {
-            list += pur.name;
-            list += " | "
-            list += pur.price;
-            list += " | ";
-            list += pur.date;
-            list += "\n"
+        purchases.forEach(element => {
+            const date: DateFormate = Formatter.date(element.date);
+            let value: string = ""
+            let purchase: PurchaseDTO = {} as PurchaseDTO;
+
+
+            value += element.name;
+            value += " | "
+            value += element.price;
+            value += " | ";
+            value += date.value;
+            value += "\n";
+
+            if (!element.purchaseId) {
+                Logger.warn(this, "Purchase without id", element)
+                return;
+            }
+
+            purchase.value = value;
+            purchase.id = element.purchaseId;
+            purchase.userId = element.userId!;
+
+            list.push(purchase);
         });
         return list;
-    }
-
-    private format(list: Purchase[]): string[] {
-        return [""];
     }
 }

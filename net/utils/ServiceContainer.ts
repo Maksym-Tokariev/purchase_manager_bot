@@ -36,8 +36,8 @@ export class ServiceContainer {
         this.step = new StepHandler(this.sender);
         this.flow = new PurchaseFlowService(this.bot, this.sender, this.state);
         this.command = new CommandHandler(this.bot, this.flow, this.data);
-        this.query = new QueryHandler(this.bot, this.data, this.state);
         this.msgHandler = new MessageHandler(this.state, this.step);
+        this.query = new QueryHandler(this.bot, this.data, this.state, this.msgHandler);
         this.router = new MessageRouter(this.command, this.msgHandler);
         this.inputListener = new InputListener(this.bot, this.router, this.query);
     }

@@ -5,6 +5,7 @@ import {Logger} from "../utils/Logger";
 import {Formatter} from "../utils/Formatter";
 import {PurchaseFlowService} from "./PurchaseFlowService";
 import {Keyboards} from "../keyboards/Keyboards";
+import {PurchaseDTO} from "../models/PurchaseDTO";
 
 export class CommandHandler {
     private commandService: CommandService;
@@ -73,8 +74,8 @@ export class CommandHandler {
     private async commandNotFound(message: Message): Promise<void> {
         await this.bot.sendMessage(message.chat.id,
             `Command ${message.text} not found. \n You can view the available commands by typing /command_list_help`, {
-            reply_markup: Keyboards.getCommandListButtons()
-        });
+                reply_markup: Keyboards.getCommandListButtons()
+            });
     }
 
     private async HandleOptions(message: Message): Promise<void> {
@@ -99,7 +100,7 @@ export class CommandHandler {
 
         if (input.length < 2) {
             await this.bot.sendMessage(message.chat.id,
-                `You have not added any data.\nIt should be like this /purchase [bread, 4.65, ${new Date().toLocaleDateString()}]`);
+                `You have not added any data.\nIt should be like this /add -> name`);
             return;
         }
 
@@ -111,20 +112,19 @@ export class CommandHandler {
     }
 
     private async handleHistory(message: Message): Promise<void> {
-        try {
-            const data: string = await this.dataProcessor.getLastPurchases(10);
+        const data: PurchaseDTO[] = await this.dataProcessor.getLastPurchases(10);
 
-            Logger.info(this, "Data obtained", data);
-            if (data.length > 0) {
-                try {
-                    await this.bot.sendMessage(message.chat.id, data);
-                } catch (err) {
-                    Logger.error(this,"Message send error", err);
+        if (data.length > 0) {
+            try {
+                for (const purchase of data) {
+                    await this.bot.sendMessage(message.chat.id, purchase.value, {
+                        reply_markup: Keyboards.getPurchaseOptionKeyboard(purchase.id)
+                    });
                 }
-            } else
-                await this.bot.sendMessage(message.chat.id, "Your shopping list is empty.\nAdd purchases and try again");
-        } catch (err: any) {
-            Logger.error(this, "Handle history error:", err);
-        }
+            } catch (err) {
+                Logger.error(this, "History send error", err);
+            }
+        } else
+            await this.bot.sendMessage(message.chat.id, "Your shopping list is empty.\nAdd purchases and try again");
     }
 }
