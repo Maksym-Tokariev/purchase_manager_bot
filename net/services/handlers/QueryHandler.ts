@@ -6,14 +6,18 @@ import {StateManager} from "../StateManager";
 import {Purchase} from "../../models/Purchase";
 import {Keyboards} from "../../keyboards/Keyboards";
 import {PurchaseFlowService} from "../PurchaseFlowService";
+import {PurchaseDTO} from "../../models/PurchaseDTO";
+import {config} from "../../config/Config";
+import {MessageSender} from "../MessageSender";
 
 export class QueryHandler {
 
     constructor(
         private bot: TelegramBot,
-        private dataProcessor: DataProcessor,
+        private data: DataProcessor,
         private state: StateManager,
-        private flow: PurchaseFlowService
+        private flow: PurchaseFlowService,
+        private sender: MessageSender
     ) {}
 
     async handle(query: CallbackQuery): Promise<void> {
@@ -51,7 +55,13 @@ export class QueryHandler {
                 case "today":
                 case "yesterday":
                     await this.handleDate(chatId, userId, queryId, queryData);
-
+                    break;
+                case "add":
+                    await this.handleAdd(chatId, userId, queryId);
+                    break;
+                case "history":
+                    await this.handleHistory(chatId, userId, queryId);
+                    break;
             }
         } catch (err) {
             Logger.error(this, "An error occurred while handling the callback", query.message);
@@ -89,22 +99,23 @@ export class QueryHandler {
         }
 
         try {
-            await this.dataProcessor.addPurchase(purchase);
+            await this.data.addPurchase(purchase);
         } catch (err) {
             Logger.error(this, "A purchase saving error", err);
             await this.bot.sendMessage(chatId, "There is en error, please try again");
         }
 
         await this.bot.editMessageText("✅ I added the purchase", {
+            reply_markup: {
+                inline_keyboard: [
+                    [ { text: "➕ Add more", callback_data: "add" }, { text: "History", callback_data: "history" } ]
+                ]
+            },
             chat_id: chatId,
             message_id: messageId
         });
 
         void this.answer(queryId);
-    }
-
-    private async answer(queryId: string): Promise<void> {
-        await this.bot.answerCallbackQuery(queryId);
     }
 
     private async handleCancel(chatId: number, messageId: number, userId: number, queryId: string): Promise<void> {
@@ -132,7 +143,7 @@ export class QueryHandler {
     private async handleDelete(chatId: number, queryId: string, queryData: string | undefined): Promise<void> {
         if (!queryData) return;
         const purchaseId = Formatter.getPurchaseId(queryData);
-        const res = await this.dataProcessor.deletePurchase(purchaseId);
+        const res = await this.data.deletePurchase(purchaseId);
 
         if (res?.acknowledged) {
             await this.bot.sendMessage(chatId, "The purchase has been deleted");
@@ -146,5 +157,20 @@ export class QueryHandler {
 
     private async handleEdit(chatId: number, queryId: string, queryData: string | undefined): Promise<void> {
 
+    }
+
+    private async handleAdd(chatId: number, userId: number, queryId: string) {
+        await this.flow.startPurchaseFlow(userId, chatId);
+        void this.answer(queryId);
+    }
+
+    private async handleHistory(chatId: number, userId: number, queryId: string): Promise<void> {
+        const data: PurchaseDTO[] = await this.data.getLastPurchases(userId, config.history_limit);
+        await this.sender.sendHistory(chatId, data);
+        void this.answer(queryId);
+    }
+
+    private async answer(queryId: string): Promise<void> {
+        await this.bot.answerCallbackQuery(queryId);
     }
 }

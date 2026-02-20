@@ -3,6 +3,7 @@ import {PurchaseStep} from "../models/PurchaseStep";
 import {Logger} from "../utils/Logger";
 import {Keyboards} from "../keyboards/Keyboards";
 import {PurchaseState} from "../models/PurchaseState";
+import {PurchaseDTO} from "../models/PurchaseDTO";
 
 export class MessageSender {
 
@@ -12,16 +13,8 @@ export class MessageSender {
     public async send(chatId: any, arg: any): Promise<void> {
         try {
             await this.bot.sendMessage(chatId, arg);
-        } catch (err) {
-            Logger.error(this, "Error send message: ", err);
-        }
-    }
-
-    public async sendWithKeyboard(chatId: any, arg: any, keyboard: any): Promise<void> {
-        try {
-            await this.bot.sendMessage(chatId, arg, keyboard);
-        } catch (err) {
-            Logger.error(this, "Error send message: ", err);
+        } catch (err: any) {
+            Logger.error(this, err.message, err.stack);
         }
     }
 
@@ -45,8 +38,7 @@ export class MessageSender {
                     break;
                 case PurchaseStep.CONFIRM:
                     await this.bot.sendMessage(chatId,
-                        `Good, I got all of them, Check that they are correct:\n 
-                    ${input?.data.name}\n ${input?.data.price}\n ${input?.data.date?.toLocaleDateString()}`, {
+                        `Good, I got all of them, Check that they are correct:\n ${input?.data.name}\n ${input?.data.price}\n ${input?.data.date?.toLocaleDateString()}`, {
                             reply_markup: Keyboards.getConfirmationInlineKeyboard(userId)
                         }
                     )
@@ -55,5 +47,20 @@ export class MessageSender {
         } catch (err: any) {
             Logger.error(this, err.message, err.stack);
         }
+    }
+
+    async sendHistory(chatId: number, data: PurchaseDTO[]): Promise<void> {
+        if (data.length > 0) {
+            try {
+                for (const purchase of data) {
+                    await this.bot.sendMessage(chatId, purchase.value, {
+                        reply_markup: Keyboards.getPurchaseOptionKeyboard(purchase.id)
+                    });
+                }
+            } catch (err: any) {
+                Logger.error(this, err.message, err.stack);
+            }
+        } else
+            await this.bot.sendMessage(chatId, "Your shopping list is empty.\nAdd purchases and try again");
     }
 }

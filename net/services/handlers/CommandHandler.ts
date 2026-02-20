@@ -2,11 +2,11 @@ import TelegramBot, {Message} from "node-telegram-bot-api";
 import {CommandRegistry} from "../CommandRegistry";
 import {DataProcessor} from "../DataProcessor";
 import {Logger} from "../../utils/Logger";
-import {Formatter} from "../../utils/Formatter";
 import {PurchaseFlowService} from "../PurchaseFlowService";
 import {Keyboards} from "../../keyboards/Keyboards";
 import {PurchaseDTO} from "../../models/PurchaseDTO";
-import {text} from "node:stream/consumers";
+import {MessageSender} from "../MessageSender";
+import {config} from "../../config/Config";
 
 export class CommandHandler {
     private commandService: CommandRegistry;
@@ -14,7 +14,8 @@ export class CommandHandler {
     constructor(
         private bot: TelegramBot,
         private flow: PurchaseFlowService,
-        private dataProcessor: DataProcessor
+        private dataProcessor: DataProcessor,
+        private sender: MessageSender
     ) {
 
         this.commandService = new CommandRegistry(bot);
@@ -42,7 +43,7 @@ export class CommandHandler {
         else if (command === "/command_list_help")
             await this.handleCommandList(message);
         else if (command === "/history")
-            await this.handleHistory(message);
+            await this.handleHistory(message.from?.id!, message.chat.id);
         else
             await this.commandNotFound(message);
     }
@@ -106,20 +107,8 @@ export class CommandHandler {
         await this.bot.sendMessage(message.chat.id, "The command is not ready yet");
     }
 
-    private async handleHistory(message: Message): Promise<void> {
-        const data: PurchaseDTO[] = await this.dataProcessor.getLastPurchases(10);
-
-        if (data.length > 0) {
-            try {
-                for (const purchase of data) {
-                    await this.bot.sendMessage(message.chat.id, purchase.value, {
-                        reply_markup: Keyboards.getPurchaseOptionKeyboard(purchase.id)
-                    });
-                }
-            } catch (err) {
-                Logger.error(this, "History send error", err);
-            }
-        } else
-            await this.bot.sendMessage(message.chat.id, "Your shopping list is empty.\nAdd purchases and try again");
+    private async handleHistory(userId: number, chatId: number): Promise<void> {
+        const data: PurchaseDTO[] = await this.dataProcessor.getLastPurchases(userId, config.history_limit);
+        await this.sender.sendHistory(chatId, data);
     }
 }

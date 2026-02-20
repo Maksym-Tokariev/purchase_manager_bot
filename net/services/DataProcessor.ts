@@ -31,10 +31,10 @@ export class DataProcessor {
         }
     }
 
-    public async getLastPurchases(limit: number): Promise<PurchaseDTO[]> {
+    public async getLastPurchases(userId: number, limit: number): Promise<PurchaseDTO[]> {
         if (!this.mongo.getPurchases() || this.mongo.getPurchases() === undefined) throw new Error("No purchases collection");
         const data = await this.mongo.getPurchases()!
-            .find({})
+            .find({ userId: userId })
             .sort({_id: -1})
             .limit(limit)
             .toArray();

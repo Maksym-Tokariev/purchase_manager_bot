@@ -1,23 +1,23 @@
-import {PurchaseStep} from "../../models/PurchaseStep";
-import {StateManager} from "../StateManager";
-import {StepHandler} from "./StepHandler";
 import {CommandHandler} from "./CommandHandler";
-import {CallbackQuery, Message} from "node-telegram-bot-api";
+import {Message} from "node-telegram-bot-api";
 import {PurchaseFlowService} from "../PurchaseFlowService";
+import {MessageSender} from "../MessageSender";
+import {PurchaseDTO} from "../../models/PurchaseDTO";
+import {DataProcessor} from "../DataProcessor";
+import {config} from "../../config/Config";
+import {InputContext} from "../../models/InputContext";
 
 export class MessageHandler {
 
     constructor(
-        private state: StateManager,
-        private step: StepHandler,
         private command: CommandHandler,
-        private flow: PurchaseFlowService
-    ) {
-    }
+        private flow: PurchaseFlowService,
+        private sender: MessageSender,
+        private data: DataProcessor
+    ) {}
 
     async handle(input: Message): Promise<void> {
         const {userId, chatId, text} = this.normalizeInput(input);
-
 
         switch (text) {
             case "Add":
@@ -28,10 +28,14 @@ export class MessageHandler {
                 await this.command.handle(input);
                 break;
             case "History":
-                input.text = "/history";
-                await this.command.handle(input);
+                await this.handleHistory(userId, chatId);
                 break;
         }
+    }
+
+    private async handleHistory(userId: number, chatId: number): Promise<void> {
+        const data: PurchaseDTO[] = await this.data.getLastPurchases(userId, config.history_limit);
+        await this.sender.sendHistory(chatId, data);
     }
 
     private normalizeInput(input: Message): InputContext {
