@@ -1,7 +1,7 @@
 import {Logger} from "../utils/Logger";
 import TelegramBot from "node-telegram-bot-api";
 import {MessageRouter} from "./MessageRouter";
-import {QueryHandler} from "./QueryHandler";
+import {QueryHandler} from "./handlers/QueryHandler";
 
 export class InputListener {
 

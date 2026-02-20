@@ -1,11 +1,11 @@
 import TelegramBot, {CallbackQuery} from "node-telegram-bot-api";
-import {Logger} from "../utils/Logger";
-import {DataProcessor} from "./DataProcessor";
-import {Formatter} from "../utils/Formatter";
-import {StateManager} from "./StateManager";
-import {Purchase} from "../models/Purchase";
-import {Keyboards} from "../keyboards/Keyboards";
-import {MessageHandler} from "./MessageHandler";
+import {Logger} from "../../utils/Logger";
+import {DataProcessor} from "../DataProcessor";
+import {Formatter} from "../../utils/Formatter";
+import {StateManager} from "../StateManager";
+import {Purchase} from "../../models/Purchase";
+import {Keyboards} from "../../keyboards/Keyboards";
+import {PurchaseFlowService} from "../PurchaseFlowService";
 
 export class QueryHandler {
 
@@ -13,7 +13,7 @@ export class QueryHandler {
         private bot: TelegramBot,
         private dataProcessor: DataProcessor,
         private state: StateManager,
-        private message: MessageHandler
+        private flow: PurchaseFlowService
     ) {}
 
     async handle(query: CallbackQuery): Promise<void> {
@@ -31,6 +31,9 @@ export class QueryHandler {
 
             if (queryData?.includes("purchase_confirm")) {
                 await this.handleConfirm(chatId, messageId, queryData, queryId);
+            }
+            if (queryData?.includes("delete")) {
+                await this.handleDelete(chatId, queryId, queryData);
             }
 
             switch (queryData) {
@@ -68,7 +71,7 @@ export class QueryHandler {
     }
 
     private async handleConfirm(chatId: number, messageId: number, queryData: string, queryId: string) {
-        const userId: number = Formatter.getUserId(queryData);
+        const userId: number = Formatter.getId(queryData);
 
         Logger.debug(this, `UserId : ${userId}, queryId : ${queryId}`);
 
@@ -121,8 +124,27 @@ export class QueryHandler {
         });
     }
 
-    private async handleDate(chatId: number, userId: number, queryId: string, queryData: string) {
-        await this.message.handle(userId, chatId, queryData);
+    private async handleDate(chatId: number, userId: number, queryId: string, queryData: string): Promise<void> {
+        await this.flow.handleFlow(userId, chatId, queryData);
         void this.answer(queryId);
+    }
+
+    private async handleDelete(chatId: number, queryId: string, queryData: string | undefined): Promise<void> {
+        if (!queryData) return;
+        const purchaseId = Formatter.getPurchaseId(queryData);
+        const res = await this.dataProcessor.deletePurchase(purchaseId);
+
+        if (res?.acknowledged) {
+            await this.bot.sendMessage(chatId, "The purchase has been deleted");
+            void this.answer(queryId);
+            return
+        }
+
+        await this.bot.sendMessage(chatId, "Delete error");
+        void this.answer(queryId);
+    }
+
+    private async handleEdit(chatId: number, queryId: string, queryData: string | undefined): Promise<void> {
+
     }
 }

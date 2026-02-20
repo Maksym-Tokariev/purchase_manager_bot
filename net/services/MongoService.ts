@@ -47,10 +47,9 @@ export class MongoService {
         return res.modifiedCount;
     }
 
-    public async delete(id: string): Promise<number> {
+    public async delete(purchaseId: string): Promise<DeleteResult> {
         if (!this.purchases) throw new Error("No purchases collection");
-        const res: DeleteResult = await this.purchases.deleteOne({_id: new Object(id)});
-        return res.deletedCount;
+        return await this.purchases.deleteOne({purchaseId: purchaseId});
     }
 
     public getPurchases(): Collection<Purchase> | undefined {

@@ -4,6 +4,7 @@ import {Logger} from "../utils/Logger";
 import {Formatter} from "../utils/Formatter";
 import {DateFormate} from "../errors/DateFormate";
 import {PurchaseDTO} from "../models/PurchaseDTO";
+import {DeleteResult} from "mongodb";
 
 
 export class DataProcessor {
@@ -22,9 +23,9 @@ export class DataProcessor {
         }
     }
 
-    public async deletePurchase(purchaseId: string): Promise<void> {
+    public async deletePurchase(purchaseId: string): Promise<DeleteResult | undefined> {
         try {
-            await this.mongo.delete(purchaseId);
+            return  await this.mongo.delete(purchaseId);
         } catch (err: any) {
             Logger.error(this, err.message, err.stack);
         }

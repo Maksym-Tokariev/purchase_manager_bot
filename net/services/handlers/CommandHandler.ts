@@ -1,26 +1,27 @@
 import TelegramBot, {Message} from "node-telegram-bot-api";
-import {CommandService} from "./CommandService";
-import {DataProcessor} from "./DataProcessor";
-import {Logger} from "../utils/Logger";
-import {Formatter} from "../utils/Formatter";
-import {PurchaseFlowService} from "./PurchaseFlowService";
-import {Keyboards} from "../keyboards/Keyboards";
-import {PurchaseDTO} from "../models/PurchaseDTO";
+import {CommandRegistry} from "../CommandRegistry";
+import {DataProcessor} from "../DataProcessor";
+import {Logger} from "../../utils/Logger";
+import {Formatter} from "../../utils/Formatter";
+import {PurchaseFlowService} from "../PurchaseFlowService";
+import {Keyboards} from "../../keyboards/Keyboards";
+import {PurchaseDTO} from "../../models/PurchaseDTO";
+import {text} from "node:stream/consumers";
 
 export class CommandHandler {
-    private commandService: CommandService;
+    private commandService: CommandRegistry;
 
     constructor(
         private bot: TelegramBot,
-        private purchaseFlowService: PurchaseFlowService,
+        private flow: PurchaseFlowService,
         private dataProcessor: DataProcessor
     ) {
 
-        this.commandService = new CommandService(bot);
+        this.commandService = new CommandRegistry(bot);
         this.commandService.setCommandsList()
             .then(() => Logger.info(this, "Commands have been set"))
             .catch(err => Logger.error(this, "Error installing commands", err.message));
-        Logger.debug(this, "Command handler was initialized");
+        Logger.info(this, "Command handler was initialized");
     }
 
     async handle(message: Message): Promise<void> {
@@ -31,13 +32,13 @@ export class CommandHandler {
         if (command === "/start")
             await this.handleStart(message);
         else if (command === "/help")
-            await this.handleHelp(message);
+            await this.handleHelp(message.chat.id);
         else if (command === "/ref")
-            await this.handleRef(message);
+            await this.handleRef(message.from?.id!, message.chat.id);
         else if (command === "/options")
             await this.HandleOptions(message);
         else if (command === "/add")
-            await this.handlePurchase(message);
+            await this.handleAdd(message);
         else if (command === "/command_list_help")
             await this.handleCommandList(message);
         else if (command === "/history")
@@ -57,18 +58,26 @@ export class CommandHandler {
         const name: string = message.from?.first_name ? message.from?.first_name! : message.from?.username!
 
         await this.bot.sendMessage(message.chat.id,
-            `Hello, ${name}. \nWith my help you can track your spending.\nSend me what you bought ande when, and I'll compile statistics for you`);
+            `Hello, ${name}. \nWith my help you can track your spending.\nSend me what you bought ande when, and I'll compile statistics for you`, {
+                reply_markup: {
+                    keyboard: [
+                        [{text: "Add"}],
+                        [{text: "Help"}],
+                        [{text: "History"}]
+                    ]
+                }
+            });
     }
 
-    private async handleHelp(message: Message): Promise<void> {
-        await this.bot.sendMessage(message.chat.id,
+    private async handleHelp(chatId: number): Promise<void> {
+        await this.bot.sendMessage(chatId,
             "Send purchase detail using /add, next follow the instruction"
         );
     }
 
-    private async handleRef(message: Message): Promise<void> {
-        const link = `${process.env.URL_TO_BOT}?start=ref_${message.from?.id}`
-        await this.bot.sendMessage(message.chat.id, `Your referral link: ${link}`);
+    private async handleRef(userId: number, chatId: number): Promise<void> {
+        const link = `${process.env.URL_TO_BOT}?start=ref_${userId}`;
+        await this.bot.sendMessage(chatId, `Your referral link: ${link}`);
     }
 
     private async commandNotFound(message: Message): Promise<void> {
@@ -82,29 +91,15 @@ export class CommandHandler {
         await this.bot.sendMessage(message.chat.id, "The command is not ready yet");
     }
 
-    private async handlePurchase(message: Message): Promise<void> {
-        const chatId: number | undefined = message ? message.chat.id : undefined;
+    private async handleAdd(message: Message): Promise<void> {
+        const chatId: number = message.chat.id;
         const userId: number | undefined = message ? message.from?.id : undefined;
 
-        if (!chatId || !userId) {
-            Logger.error(this, "Chat or user id is undefined: ", {userId, chatId});
+        if (!userId) {
+            Logger.error(this, "User id is undefined: ", {userId});
             return;
         }
-
-        if (!message.text) {
-            await this.bot.sendMessage(message.chat.id, "Empty value");
-            return;
-        }
-
-        const input: string = Formatter.stripCommand(message.text);
-
-        if (input.length < 2) {
-            await this.bot.sendMessage(message.chat.id,
-                `You have not added any data.\nIt should be like this /add -> name`);
-            return;
-        }
-
-        await this.purchaseFlowService.startPurchaseFlow(userId, chatId);
+        await this.flow.startPurchaseFlow(userId, chatId);
     }
 
     private async handleCommandList(message: Message): Promise<void> {

@@ -13,7 +13,7 @@ export class Formatter {
         return result;
     }
 
-    public static getUserId(input: string): number {
+    public static getId(input: string): number {
         let res: string = "";
         const indexOfUserId = input.indexOf(":");
         res += input.substring(indexOfUserId + 1, input.length).trim();
@@ -24,6 +24,11 @@ export class Formatter {
             return 0;
         else
             return resInt;
+    }
+
+    public static getPurchaseId(query: string): string {
+        const index = query.indexOf(":");
+        return query.substring(index + 1, query.length).trim();
     }
 
     public static toPurchase(state: PurchaseState): Purchase {

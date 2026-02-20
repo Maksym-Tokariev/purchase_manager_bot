@@ -2,7 +2,7 @@ import {Commands} from "../config/Commands";
 import TelegramBot, {BotCommand} from "node-telegram-bot-api";
 import {Logger} from "../utils/Logger";
 
-export class CommandService {
+export class CommandRegistry {
     private bot: TelegramBot;
     private commands: BotCommand[] = [];
 

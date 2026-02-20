@@ -1,8 +1,8 @@
-import {PurchaseState} from "../models/PurchaseState";
-import {PurchaseStep} from "../models/PurchaseStep";
-import {MessageSender} from "./MessageSender";
-import {PurchaseValidator} from "../utils/PurchaseValidator";
-import {Logger} from "../utils/Logger";
+import {PurchaseState} from "../../models/PurchaseState";
+import {PurchaseStep} from "../../models/PurchaseStep";
+import {MessageSender} from "../MessageSender";
+import {PurchaseValidator} from "../../utils/PurchaseValidator";
+import {Logger} from "../../utils/Logger";
 
 export class StepHandler {
 
