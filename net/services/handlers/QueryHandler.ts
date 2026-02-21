@@ -39,6 +39,9 @@ export class QueryHandler {
             if (queryData?.includes("delete")) {
                 await this.handleDelete(chatId, queryId, queryData);
             }
+            if (queryData?.includes("edit")) {
+                await this.handleEdit(chatId, queryId, queryData);
+            }
 
             switch (queryData) {
                 case "command_list":
@@ -155,12 +158,14 @@ export class QueryHandler {
         void this.answer(queryId);
     }
 
-    private async handleEdit(chatId: number, queryId: string, queryData: string | undefined): Promise<void> {
+    private async handleEdit(chatId: number, queryId: string, queryData: string): Promise<void> {
+        const id = Formatter.getPurchaseId(queryData);
+        const purchase = this.data.getPurchase(id);
 
     }
 
     private async handleAdd(chatId: number, userId: number, queryId: string) {
-        await this.flow.startPurchaseFlow(userId, chatId);
+        await this.flow.startAddFlow(userId, chatId);
         void this.answer(queryId);
     }
 

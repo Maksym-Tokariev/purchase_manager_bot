@@ -100,7 +100,7 @@ export class CommandHandler {
             Logger.error(this, "User id is undefined: ", {userId});
             return;
         }
-        await this.flow.startPurchaseFlow(userId, chatId);
+        await this.flow.startAddFlow(userId, chatId);
     }
 
     private async handleCommandList(message: Message): Promise<void> {

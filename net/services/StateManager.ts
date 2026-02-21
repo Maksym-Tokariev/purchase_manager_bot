@@ -16,11 +16,11 @@ export class StateManager {
         return state !== undefined && state.currentStep !== PurchaseStep.IDLE;
     }
 
-    startFlow(userId: number, chatId: number): void {
+    startFlow(userId: number, chatId: number, step: PurchaseStep): void {
         this.states.set(userId, {
             userId: userId,
             chatId: chatId,
-            currentStep: PurchaseStep.NAME,
+            currentStep: step,
             data: {}
         });
     }

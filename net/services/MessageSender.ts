@@ -52,6 +52,7 @@ export class MessageSender {
     async sendHistory(chatId: number, data: PurchaseDTO[]): Promise<void> {
         if (data.length > 0) {
             try {
+                await this.bot.sendMessage(chatId, "✏️ History of the last 10 purchases");
                 for (const purchase of data) {
                     await this.bot.sendMessage(chatId, purchase.value, {
                         reply_markup: Keyboards.getPurchaseOptionKeyboard(purchase.id)

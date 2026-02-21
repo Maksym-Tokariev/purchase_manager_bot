@@ -12,9 +12,21 @@ export class PurchaseFlowService {
         private step: StepHandler
     ) {}
 
-    async startPurchaseFlow(userId: number, chatId: number): Promise<void> {
-        this.state.startFlow(userId, chatId);
+    async startAddFlow(userId: number, chatId: number): Promise<void> {
+        this.state.startFlow(userId, chatId, PurchaseStep.NAME);
+
+        setTimeout(() => {
+            if (this.state.isInFlow(userId)) {
+                this.state.cancelFlow(userId, chatId);
+                this.messageSender.send(chatId, "Время сессии истекло. Начните заново.");
+            }
+        }, 5 * 60 * 1000);
+
         await this.messageSender.sendStepMessage(userId, chatId, PurchaseStep.NAME);
+    }
+
+    async startEditFlow(userId: number, chatId: number): Promise<void> {
+
     }
 
     public async handleFlow(userId: number, chatId: number, text: string): Promise<void> {

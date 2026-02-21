@@ -4,7 +4,7 @@ import {Logger} from "../utils/Logger";
 import {Formatter} from "../utils/Formatter";
 import {DateFormate} from "../errors/DateFormate";
 import {PurchaseDTO} from "../models/PurchaseDTO";
-import {DeleteResult} from "mongodb";
+import {DeleteResult, WithId} from "mongodb";
 
 
 export class DataProcessor {
@@ -28,6 +28,23 @@ export class DataProcessor {
             return  await this.mongo.delete(purchaseId);
         } catch (err: any) {
             Logger.error(this, err.message, err.stack);
+        }
+    }
+
+    public async editPurchase(purchaseId: string, input: Partial<Purchase>): Promise<void> {
+        try {
+            await this.mongo.update(purchaseId, input);
+        } catch (err: any) {
+            Logger.error(this, err.message, err.stack);
+        }
+    }
+
+    public async getPurchase(purchaseId: string): Promise<WithId<Purchase> | null> {
+        try {
+            return await this.mongo.find(purchaseId);
+        } catch (err: any) {
+            Logger.error(this, err.message, err.stack);
+            return null;
         }
     }
 

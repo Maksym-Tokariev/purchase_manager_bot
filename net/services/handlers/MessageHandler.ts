@@ -21,7 +21,7 @@ export class MessageHandler {
 
         switch (text) {
             case "Add":
-                await this.flow.startPurchaseFlow(userId, chatId);
+                await this.flow.startAddFlow(userId, chatId);
                 break;
             case "Help":
                 input.text = "/help";

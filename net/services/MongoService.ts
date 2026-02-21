@@ -1,4 +1,4 @@
-import {Collection, Db, DeleteResult, MongoClient, WithId} from "mongodb";
+import {Collection, Db, DeleteResult, MongoClient, UpdateResult, WithId} from "mongodb";
 import {Purchase} from "../models/Purchase";
 import {Logger} from "../utils/Logger";
 
@@ -33,18 +33,17 @@ export class MongoService {
         await this.purchases.insertOne(purchase);
     }
 
-    public async find(query: Partial<Purchase>): Promise<WithId<Purchase>[]> {
+    public async find(purchaseId: string): Promise<WithId<Purchase> | null> {
         if (!this.purchases) throw new Error("No purchases collection");
-        return await this.purchases.find(query).toArray();
+        return await this.purchases.findOne({purchaseId: purchaseId});
     }
 
-    public async update(id: string, update: Partial<Purchase>): Promise<number> {
+    public async update(purchaseId: string, update: Partial<Purchase>): Promise<UpdateResult> {
         if (!this.purchases) throw new Error("No purchases collection");
-        const res = await this.purchases.updateOne(
-            {_id: new Object(id)},
+        return await this.purchases.updateOne(
+            {purchaseId: purchaseId},
             {$set: update}
         );
-        return res.modifiedCount;
     }
 
     public async delete(purchaseId: string): Promise<DeleteResult> {
