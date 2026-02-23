@@ -12,6 +12,7 @@ import {DataProcessor} from "../services/DataProcessor";
 import {config} from "../config/Config";
 import {InputListener} from "../services/InputListener";
 import {MessageHandler} from "../services/handlers/MessageHandler";
+import {ValidationService} from "../services/validation/ValidationService";
 
 export class ServiceContainer {
     private readonly bot: TelegramBot;
@@ -26,15 +27,17 @@ export class ServiceContainer {
     private readonly router: MessageRouter;
     private readonly data: DataProcessor;
     private readonly message: MessageHandler;
+    private readonly validation: ValidationService;
 
     constructor(bot: Bot) {
         this.bot = bot.getTelegramBot();
+        this.validation = new ValidationService();
         this.mongoService = new MongoService(config.mongo.uri, config.mongo.dbName);
         this.sender = new MessageSender(this.bot);
         this.data = new DataProcessor(this.mongoService);
         this.state = new StateManager();
         this.step = new StepHandler(this.sender);
-        this.flow = new PurchaseFlowService(this.bot, this.sender, this.state, this.step);
+        this.flow = new PurchaseFlowService(this.sender, this.state, this.step, this.validation);
         this.command = new CommandHandler(this.bot, this.flow, this.data, this.sender);
         this.message = new MessageHandler(this.command, this.flow, this.sender, this.data);
         this.query = new QueryHandler(this.bot, this.data, this.state, this.flow, this.sender);

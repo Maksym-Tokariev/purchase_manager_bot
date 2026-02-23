@@ -3,13 +3,14 @@ import {StateManager} from "./StateManager";
 import {PurchaseStep} from "../models/PurchaseStep";
 import {MessageSender} from "./MessageSender";
 import {StepHandler} from "./handlers/StepHandler";
+import {ValidationService} from "./validation/ValidationService";
 
 export class PurchaseFlowService {
     constructor(
-        private bot: TelegramBot,
-        private messageSender: MessageSender,
+        private sender: MessageSender,
         private state: StateManager,
-        private step: StepHandler
+        private step: StepHandler,
+        private validator: ValidationService
     ) {}
 
     async startAddFlow(userId: number, chatId: number): Promise<void> {
@@ -18,11 +19,11 @@ export class PurchaseFlowService {
         setTimeout(() => {
             if (this.state.isInFlow(userId)) {
                 this.state.cancelFlow(userId, chatId);
-                this.messageSender.send(chatId, "Время сессии истекло. Начните заново.");
+                this.sender.sendMessage(chatId, "Session time out. Start over");
             }
         }, 5 * 60 * 1000);
 
-        await this.messageSender.sendStepMessage(userId, chatId, PurchaseStep.NAME);
+        await this.sender.sendStepMessage(userId, chatId, PurchaseStep.NAME);
     }
 
     async startEditFlow(userId: number, chatId: number): Promise<void> {
@@ -34,21 +35,13 @@ export class PurchaseFlowService {
 
         if (!state) return;
 
-        switch (state.currentStep) {
-            case PurchaseStep.NAME:
-                await this.step.handleName(userId, chatId, text, state);
-                break;
-            case PurchaseStep.PRICE:
-                await this.step.handlePrice(userId, chatId, text, state);
-                break;
-            case PurchaseStep.DATE:
-                await this.step.handleDate(userId, chatId, text, state);
-                break;
-            case PurchaseStep.CONFIRM:
-                await this.step.handleConfirm(userId, chatId, text, state);
-                break;
-            default:
-                await this.step.setIdle(userId, state);
+        const validation = await this.validator.validate(text, state.currentStep);
+
+        if (!validation.valid) {
+            await this.sender.sendMessage(chatId, validation.error!);
+            return;
         }
+
+        await this.step.handle(userId, chatId, validation["value"], state)
     }
 }

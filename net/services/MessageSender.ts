@@ -4,17 +4,20 @@ import {Logger} from "../utils/Logger";
 import {Keyboards} from "../keyboards/Keyboards";
 import {PurchaseState} from "../models/PurchaseState";
 import {PurchaseDTO} from "../models/PurchaseDTO";
+import {SendMessageError} from "../errors/SendMessageError";
 
 export class MessageSender {
 
     constructor(private readonly bot: TelegramBot) {
     }
 
-    public async send(chatId: any, arg: any): Promise<void> {
+    public async sendMessage(chatId: any, text: string): Promise<void> {
         try {
-            await this.bot.sendMessage(chatId, arg);
-        } catch (err: any) {
-            Logger.error(this, err.message, err.stack);
+            await this.bot.sendMessage(chatId, text);
+        } catch (err: unknown) {
+            if (err instanceof SendMessageError) {
+                Logger.error(this, err.message, err.stack);
+            }
         }
     }
 

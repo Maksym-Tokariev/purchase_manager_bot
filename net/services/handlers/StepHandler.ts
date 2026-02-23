@@ -1,65 +1,73 @@
 import {PurchaseState} from "../../models/PurchaseState";
 import {PurchaseStep} from "../../models/PurchaseStep";
 import {MessageSender} from "../MessageSender";
-import {PurchaseValidator} from "../../utils/PurchaseValidator";
-import {Logger} from "../../utils/Logger";
+import {ValidationDTO} from "../../models/ValidationDTO";
 
 export class StepHandler {
 
     constructor(private sender: MessageSender) {}
 
-    async handleName(userId: number, chatId: number, text: string, state: PurchaseState): Promise<void> {
-        if (!chatId || !text) return;
+    async handle(userId: number, chatId: number, input: ValidationDTO["value"], state: PurchaseState): Promise<void> {
+        if (!input) {
+            await this.sender.sendMessage(chatId, "Incorrect value");
+            return;
+        }
+        switch (state.currentStep) {
+            case PurchaseStep.NAME:
+                if (!input?.name) {
+                    await this.sender.sendMessage(chatId, "Incorrect name");
+                    return;
+                }
+                await this.handleName(userId, chatId, input.name, state);
+                break;
 
-        const name = PurchaseValidator.validateName(text);
+            case PurchaseStep.PRICE:
+                if (!input?.price) {
+                    await this.sender.sendMessage(chatId, "Incorrect price");
+                    return;
+                }
+                await this.handlePrice(userId, chatId, input.price, state);
+                break;
 
-        if (name.valid) {
-            state.data.name = text;
-            state.currentStep = PurchaseStep.PRICE;
+            case PurchaseStep.DATE:
+                if (!input?.date) {
+                    await this.sender.sendMessage(chatId, "Incorrect date");
+                    return;
+                }
+                await this.handleDate(userId, chatId, input.date, state);
+                break;
 
-            await this.sender.sendStepMessage(userId, chatId, state.currentStep);
-        } else {
-            await this.sender.send(chatId, `Invalid name: [${name.error}]`);
+            default:
+                await this.setIdle(userId, state);
         }
     }
 
-    async handlePrice(userId: number, chatId: number, text: string, state: PurchaseState): Promise<void> {
-        if (!chatId || !text) return;
-        const price = PurchaseValidator.validatePrice(text);
+    async handleName(userId: number, chatId: number, name: string, state: PurchaseState): Promise<void> {
+        if (!chatId || !name) return;
 
-        if (price.valid) {
+        state.data.name = name;
+        state.currentStep = PurchaseStep.PRICE;
 
-            state.data.price = price.value!;
-            state.currentStep = PurchaseStep.DATE;
+        await this.sender.sendStepMessage(userId, chatId, state.currentStep);
 
-            await this.sender.sendStepMessage(userId, chatId, state.currentStep);
-        } else {
-            await this.sender.send(chatId, `Invalid price: [${price.error}]`);
-        }
     }
 
-    async handleDate(userId: number, chatId: number, text: string, state: PurchaseState): Promise<void> {
-        if (!chatId || !text) return;
+    async handlePrice(userId: number, chatId: number, price: number, state: PurchaseState): Promise<void> {
+        if (!chatId || !price) return;
 
-        const date = PurchaseValidator.validateDate(text);
+        state.data.price = price;
+        state.currentStep = PurchaseStep.DATE;
 
-        if (date.error) {
-            Logger.error(this, "Date validation error:", date.error);
-            await this.sender.send(chatId, "Invalid date, please try enter date again");
-        }
-
-        if (date.valid) {
-            state.data.date = date.value;
-            state.currentStep = PurchaseStep.CONFIRM;
-
-            await this.sender.sendStepMessage(userId, chatId, state.currentStep, state);
-        } else {
-            await this.sender.send(chatId, `Invalid date [${date.error}]`);
-        }
+        await this.sender.sendStepMessage(userId, chatId, state.currentStep);
     }
 
-    async handleConfirm(userId: number, chatId: number, text: string, state: PurchaseState): Promise<void> {
+    async handleDate(userId: number, chatId: number, date: Date, state: PurchaseState): Promise<void> {
+        if (!chatId || !date) return;
 
+        state.data.date = date;
+        state.currentStep = PurchaseStep.CONFIRM;
+
+        await this.sender.sendStepMessage(userId, chatId, state.currentStep, state);
     }
 
     async setIdle(userId: number, state: PurchaseState): Promise<void> {
