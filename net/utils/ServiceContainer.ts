@@ -36,7 +36,7 @@ export class ServiceContainer {
         this.sender = new MessageSender(this.bot);
         this.data = new DataProcessor(this.mongoService);
         this.state = new StateManager();
-        this.step = new StepHandler(this.sender);
+        this.step = new StepHandler(this.sender, this.state);
         this.flow = new PurchaseFlowService(this.sender, this.state, this.step, this.validation);
         this.command = new CommandHandler(this.bot, this.flow, this.data, this.sender);
         this.message = new MessageHandler(this.command, this.flow, this.sender, this.data);

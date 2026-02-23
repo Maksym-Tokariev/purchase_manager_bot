@@ -2,10 +2,14 @@ import {PurchaseState} from "../../models/PurchaseState";
 import {PurchaseStep} from "../../models/PurchaseStep";
 import {MessageSender} from "../MessageSender";
 import {ValidationDTO} from "../../models/ValidationDTO";
+import {StateManager} from "../StateManager";
 
 export class StepHandler {
 
-    constructor(private sender: MessageSender) {}
+    constructor(
+        private sender: MessageSender,
+        private state: StateManager
+    ) {}
 
     async handle(userId: number, chatId: number, input: ValidationDTO["value"], state: PurchaseState): Promise<void> {
         if (!input) {
@@ -45,18 +49,17 @@ export class StepHandler {
     async handleName(userId: number, chatId: number, name: string, state: PurchaseState): Promise<void> {
         if (!chatId || !name) return;
 
-        state.data.name = name;
-        state.currentStep = PurchaseStep.PRICE;
+        this.state.updateData(userId, {name: name});
+        this.state.updateStep(userId, PurchaseStep.PRICE);
 
         await this.sender.sendStepMessage(userId, chatId, state.currentStep);
-
     }
 
     async handlePrice(userId: number, chatId: number, price: number, state: PurchaseState): Promise<void> {
         if (!chatId || !price) return;
 
-        state.data.price = price;
-        state.currentStep = PurchaseStep.DATE;
+        this.state.updateData(userId, {price: price});
+        this.state.updateStep(userId, PurchaseStep.DATE);
 
         await this.sender.sendStepMessage(userId, chatId, state.currentStep);
     }
@@ -64,8 +67,8 @@ export class StepHandler {
     async handleDate(userId: number, chatId: number, date: Date, state: PurchaseState): Promise<void> {
         if (!chatId || !date) return;
 
-        state.data.date = date;
-        state.currentStep = PurchaseStep.CONFIRM;
+        this.state.updateData(userId, {date: date});
+        this.state.updateStep(userId, PurchaseStep.CONFIRM);
 
         await this.sender.sendStepMessage(userId, chatId, state.currentStep, state);
     }
