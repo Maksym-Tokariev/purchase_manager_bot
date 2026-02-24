@@ -72,4 +72,24 @@ export class Keyboards {
             ]
         };
     }
+
+    static getEditParameter() {
+        return {
+            inline_keyboard: [
+                [
+                    { text: "Name", callback_data: "edit_name" },
+                ],
+                [
+                    { text: "Price", callback_data: "edit_price" }
+                ],
+                [
+                    { text: "Date", callback_data: "edit_date" }
+                ],
+                [
+                    { text: "🗑️ Cancel", callback_data: "purchase_cancel" },
+                    { text: "➕ Add category", callback_data: "purchase_add_category" }
+                ]
+            ]
+        };
+    }
 }

@@ -5,6 +5,7 @@ import {Keyboards} from "../keyboards/Keyboards";
 import {PurchaseState} from "../models/PurchaseState";
 import {PurchaseDTO} from "../models/PurchaseDTO";
 import {SendMessageError} from "../errors/SendMessageError";
+import {Purchase} from "../models/Purchase";
 
 export class MessageSender {
 
@@ -21,7 +22,12 @@ export class MessageSender {
         }
     }
 
-    async sendStepMessage(userId: number, chatId: number, step: PurchaseStep, input?: PurchaseState): Promise<void> {
+    async sendStepMessage(
+        userId: number,
+        chatId: number,
+        step: PurchaseStep,
+        input?: PurchaseState,
+    ): Promise<void> {
         try {
             switch (step) {
                 case PurchaseStep.NAME:
@@ -29,16 +35,19 @@ export class MessageSender {
                         reply_markup: Keyboards.getCancelKeyboard()
                     });
                     break;
+
                 case PurchaseStep.PRICE:
                     await this.bot.sendMessage(chatId, "Good, next I need to know the purchase price", {
                         reply_markup: Keyboards.getCancelKeyboard()
                     });
                     break;
+
                 case PurchaseStep.DATE:
                     await this.bot.sendMessage(chatId, "Great, now I need to know the date of purchase", {
                         reply_markup: Keyboards.getDateKeyboard()
                     });
                     break;
+
                 case PurchaseStep.CONFIRM:
                     await this.bot.sendMessage(chatId,
                         `Good, I got all of them, Check that they are correct:\n ${input?.data.name}\n ${input?.data.price}\n ${input?.data.date?.toLocaleDateString()}`, {
@@ -46,6 +55,11 @@ export class MessageSender {
                         }
                     )
                     break;
+                case PurchaseStep.EDIT:
+                    await this.bot.sendMessage(chatId,
+                        "Choose the parameter you want to change", {
+                        reply_markup: Keyboards.getEditParameter()
+                    });
             }
         } catch (err: any) {
             Logger.error(this, err.message, err.stack);
