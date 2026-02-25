@@ -25,6 +25,7 @@ export class QueryHandler {
         );
     }
 
+
     async handle(query: CallbackQuery): Promise<void> {
         try {
             if (!query) return;
