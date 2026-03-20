@@ -1,13 +1,13 @@
 import {Bot} from "./Bot"
-import {Logger} from "./utils/Logger";
+import {DepLogger} from "./utils/DepLogger";
 
 const bot = new Bot();
 bot.start()
     .then(() => {
-        Logger.info("Starter","Bot has been started")
+        DepLogger.info("Starter","Bot has been started")
     })
     .catch(err => {
-        Logger.error("Starter"," Bot error ", err.message);
+        DepLogger.error("Starter"," Bot error ", err.message);
         bot.stop();
         process.exit(1);
     });

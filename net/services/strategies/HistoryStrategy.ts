@@ -1,11 +1,11 @@
-import {QueryStrategy} from "../interfaces/QueryStrategy";
+import {IStrategy} from "../interfaces/IStrategy";
 import TelegramBot, {CallbackQuery} from "node-telegram-bot-api";
 import {PurchaseDTO} from "../../models/PurchaseDTO";
 import {config} from "../../config/Config";
 import {DataProcessor} from "../DataProcessor";
 import {MessageSender} from "../MessageSender";
 
-export class HistoryStrategy implements QueryStrategy {
+export class HistoryStrategy implements IStrategy {
 
     constructor(
         private bot: TelegramBot,

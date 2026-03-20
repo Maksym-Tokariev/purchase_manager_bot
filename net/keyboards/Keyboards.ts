@@ -43,7 +43,7 @@ export class Keyboards {
         return {
             inline_keyboard: [
                 [
-                    { text: "✅ Save", callback_data: `purchase_confirm:${userId}` },
+                    { text: "✅ Save", callback_data: `add:${userId}` },
                     { text: "✏️ Edit", callback_data: "purchase_edit" }
                 ],
                 [

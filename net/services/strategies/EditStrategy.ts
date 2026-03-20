@@ -1,10 +1,10 @@
-import {QueryStrategy} from "../interfaces/QueryStrategy";
+import {IStrategy} from "../interfaces/IStrategy";
 import TelegramBot from "node-telegram-bot-api";
 import {Formatter} from "../../utils/Formatter";
 import {PurchaseFlowService} from "../PurchaseFlowService";
 import {DataProcessor} from "../DataProcessor";
 
-export class EditStrategy implements QueryStrategy {
+export class EditStrategy implements IStrategy {
     constructor(
         private bot: TelegramBot,
         private flow: PurchaseFlowService,

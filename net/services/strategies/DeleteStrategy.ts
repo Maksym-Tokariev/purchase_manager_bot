@@ -1,9 +1,9 @@
-import {QueryStrategy} from "../interfaces/QueryStrategy";
+import {IStrategy} from "../interfaces/IStrategy";
 import TelegramBot from "node-telegram-bot-api";
 import {Formatter} from "../../utils/Formatter";
 import {DataProcessor} from "../DataProcessor";
 
-export class DeleteStrategy implements QueryStrategy{
+export class DeleteStrategy implements IStrategy{
     constructor(private bot: TelegramBot, private data: DataProcessor) {}
 
     async handle(query: TelegramBot.CallbackQuery): Promise<void> {

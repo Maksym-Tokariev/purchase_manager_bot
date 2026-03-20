@@ -1,12 +1,13 @@
 import {config} from "./config/Config";
 import TelegramBot from "node-telegram-bot-api";
-import {Logger} from "./utils/Logger";
 import {ServiceContainer} from "./utils/ServiceContainer";
+import {Logger} from "./utils/Logger";
 
 
 export class Bot {
     private readonly bot: TelegramBot;
     private readonly container: ServiceContainer;
+    private readonly logger = new Logger(Bot.name);
 
     public constructor() {
         this.bot = new TelegramBot(config.token, { polling: true });
@@ -16,20 +17,20 @@ export class Bot {
     }
 
     private initialize(): void {
-        Logger.debug(this, "Start initializing");
+        this.logger.debug("Start initializing");
         try {
             this.setupErrorHandling();
             this.setupMessageListener();
-            Logger.debug(this, "Successful initialization")
+            this.logger.debug("Successful initialization")
         } catch (err) {
-            Logger.error(this, "Initializing error: ");
+            this.logger.error("Initializing error: ");
             this.stop();
         }
     }
 
     private setupErrorHandling(): void {
         this.bot.on("polling_error", (err: Error) => {
-            Logger.error(this, `Polling error: [${err}]`);
+            this.logger.error(`Polling error: [${err}]`);
         })
     }
 
@@ -38,7 +39,7 @@ export class Bot {
     }
 
     public async start(): Promise<void> {
-        Logger.info(this, 'Bot started successfully!');
+        this.logger.info('Bot started successfully!');
         await this.container.mongo.connect();
     }
 
@@ -46,7 +47,7 @@ export class Bot {
         if (this.bot.isPolling()) {
             await this.bot.stopPolling();
         }
-        Logger.info(this, "Bot stopped");
+        this.logger.info("Bot stopped");
         await this.container.mongo.disconnect();
     }
 

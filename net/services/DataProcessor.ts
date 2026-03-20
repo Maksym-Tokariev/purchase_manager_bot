@@ -1,6 +1,6 @@
 import {Purchase} from "../models/Purchase";
 import {MongoService} from "./MongoService";
-import {Logger} from "../utils/Logger";
+import {DepLogger} from "../utils/DepLogger";
 import {Formatter} from "../utils/Formatter";
 import {DateFormate} from "../models/DateFormate";
 import {PurchaseDTO} from "../models/PurchaseDTO";
@@ -18,7 +18,7 @@ export class DataProcessor {
         try {
             await this.mongo.insert(purchase);
         } catch (err) {
-            Logger.error(this, "Error adding purchase:", purchase);
+            DepLogger.error(this, "Error adding purchase:", purchase);
             throw err;
         }
     }
@@ -27,7 +27,7 @@ export class DataProcessor {
         try {
             return  await this.mongo.delete(purchaseId);
         } catch (err: any) {
-            Logger.error(this, err.message, err.stack);
+            DepLogger.error(this, err.message, err.stack);
         }
     }
 
@@ -35,7 +35,7 @@ export class DataProcessor {
         try {
             await this.mongo.update(purchaseId, input);
         } catch (err: any) {
-            Logger.error(this, err.message, err.stack);
+            DepLogger.error(this, err.message, err.stack);
         }
     }
 
@@ -43,7 +43,7 @@ export class DataProcessor {
         try {
             return await this.mongo.find(purchaseId);
         } catch (err: any) {
-            Logger.error(this, err.message, err.stack);
+            DepLogger.error(this, err.message, err.stack);
             return null;
         }
     }
@@ -67,7 +67,7 @@ export class DataProcessor {
             let purchase: PurchaseDTO = {} as PurchaseDTO;
 
             if (!element.purchaseId) {
-                Logger.warn(this, "Purchase without id", element)
+                DepLogger.warn(this, "Purchase without id", element)
                 return;
             }
 

@@ -1,32 +1,51 @@
 import TelegramBot, {Message} from "node-telegram-bot-api";
 import {CommandRegistry} from "../CommandRegistry";
 import {DataProcessor} from "../DataProcessor";
-import {Logger} from "../../utils/Logger";
+import {DepLogger} from "../../utils/DepLogger";
 import {PurchaseFlowService} from "../PurchaseFlowService";
 import {Keyboards} from "../../keyboards/Keyboards";
 import {PurchaseDTO} from "../../models/PurchaseDTO";
 import {MessageSender} from "../MessageSender";
 import {config} from "../../config/Config";
+import {StrategyFactory} from "../factories/StrategyFactory";
+import {StateManager} from "../StateManager";
+import {InputAdapterFactory} from "../factories/InputAdapterFactory";
 
 export class CommandHandler {
     private commandService: CommandRegistry;
+    private factory: StrategyFactory;
 
     constructor(
         private bot: TelegramBot,
         private flow: PurchaseFlowService,
         private dataProcessor: DataProcessor,
-        private sender: MessageSender
+        private sender: MessageSender,
+        private data: DataProcessor,
+        private state: StateManager
     ) {
-
         this.commandService = new CommandRegistry(bot);
         this.commandService.setCommandsList()
-            .then(() => Logger.info(this, "Commands have been set"))
-            .catch(err => Logger.error(this, "Error installing commands", err.message));
-        Logger.info(this, "Command handler was initialized");
+            .then(() => DepLogger.info(this, "Commands have been set"))
+            .catch(err => DepLogger.error(this, "Error installing commands", err.message));
+        DepLogger.info(this, "Command handler was initialized");
+        this.factory = new StrategyFactory(
+            this.bot,
+            this.data,
+            this.state,
+            this.flow,
+            this.sender
+        );
     }
 
     async handle(message: Message): Promise<void> {
-        Logger.debug(this, `Command from ${message.from?.username} : ${message.text}`);
+        DepLogger.debug(this, `Command from ${message.from?.username} : ${message.text}`);
+        try {
+            const input = InputAdapterFactory.create(message);
+
+            const strategy = this.factory.findStrategy(input);
+        } catch (err: any) {
+            DepLogger.error(this, err.message, err.stack);
+        }
 
         const command: string = message.text!.split(" ")[0];
 
@@ -41,7 +60,7 @@ export class CommandHandler {
         else if (command === "/add")
             await this.handleAdd(message);
         else if (command === "/command_list_help")
-            await this.handleCommandList(message);
+            return;
         else if (command === "/history")
             await this.handleHistory(message.from?.id!, message.chat.id);
         else
@@ -97,14 +116,10 @@ export class CommandHandler {
         const userId: number | undefined = message ? message.from?.id : undefined;
 
         if (!userId) {
-            Logger.error(this, "User id is undefined: ", {userId});
+            DepLogger.error(this, "User id is undefined: ", {userId});
             return;
         }
         await this.flow.startAddFlow(userId, chatId);
-    }
-
-    private async handleCommandList(message: Message): Promise<void> {
-        await this.bot.sendMessage(message.chat.id, "The command is not ready yet");
     }
 
     private async handleHistory(userId: number, chatId: number): Promise<void> {

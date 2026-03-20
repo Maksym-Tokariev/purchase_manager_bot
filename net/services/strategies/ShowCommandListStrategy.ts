@@ -1,7 +1,7 @@
-import {QueryStrategy} from "../interfaces/QueryStrategy";
+import {IStrategy} from "../interfaces/IStrategy";
 import TelegramBot from "node-telegram-bot-api";
 
-export class ShowCommandListStrategy implements QueryStrategy {
+export class ShowCommandListStrategy implements IStrategy {
     constructor(private bot: TelegramBot) {}
 
     async handle(query: TelegramBot.CallbackQuery): Promise<void> {

@@ -1,5 +1,5 @@
 import {PurchaseState} from "../../models/PurchaseState";
 
-export interface StepProcessor {
+export interface IStepProcessor {
     process(state: PurchaseState, input: string): void;
 }

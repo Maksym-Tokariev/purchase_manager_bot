@@ -1,7 +1,7 @@
 import {PurchaseStep} from "../../models/PurchaseStep";
-import {StepProcessor} from "../interfaces/StepProcessor";
+import {IStepProcessor} from "../interfaces/IStepProcessor";
 
 export class FlowHandler {
-    private steps: Map<PurchaseStep, StepProcessor> = new Map();
+    private steps: Map<PurchaseStep, IStepProcessor> = new Map();
 
 }

@@ -1,6 +1,6 @@
 import TelegramBot from "node-telegram-bot-api";
 import {PurchaseStep} from "../models/PurchaseStep";
-import {Logger} from "../utils/Logger";
+import {DepLogger} from "../utils/DepLogger";
 import {Keyboards} from "../keyboards/Keyboards";
 import {PurchaseState} from "../models/PurchaseState";
 import {PurchaseDTO} from "../models/PurchaseDTO";
@@ -17,7 +17,7 @@ export class MessageSender {
             await this.bot.sendMessage(chatId, text);
         } catch (err: unknown) {
             if (err instanceof SendMessageError) {
-                Logger.error(this, err.message, err.stack);
+                DepLogger.error(this, err.message, err.stack);
             }
         }
     }
@@ -62,7 +62,7 @@ export class MessageSender {
                     });
             }
         } catch (err: any) {
-            Logger.error(this, err.message, err.stack);
+            DepLogger.error(this, err.message, err.stack);
         }
     }
 
@@ -76,7 +76,7 @@ export class MessageSender {
                     });
                 }
             } catch (err: any) {
-                Logger.error(this, err.message, err.stack);
+                DepLogger.error(this, err.message, err.stack);
             }
         } else
             await this.bot.sendMessage(chatId, "Your shopping list is empty.\nAdd purchases and try again");

@@ -1,13 +1,13 @@
 import TelegramBot, {CallbackQuery} from "node-telegram-bot-api";
-import {Logger} from "../../utils/Logger";
+import {DepLogger} from "../../utils/DepLogger";
 import {DataProcessor} from "../DataProcessor";
 import {StateManager} from "../StateManager";
 import {PurchaseFlowService} from "../PurchaseFlowService";
 import {MessageSender} from "../MessageSender";
-import {QueryStrategyFactory} from "../factory/QueryStrategyFactory";
+import {StrategyFactory} from "../factories/StrategyFactory";
 
 export class QueryHandler {
-    private factory: QueryStrategyFactory;
+    private factory: StrategyFactory;
 
     constructor(
         private bot: TelegramBot,
@@ -16,7 +16,7 @@ export class QueryHandler {
         private flow: PurchaseFlowService,
         private sender: MessageSender
     ) {
-        this.factory = new QueryStrategyFactory(
+        this.factory = new StrategyFactory(
             this.bot,
             this.data,
             this.state,
@@ -40,7 +40,7 @@ export class QueryHandler {
             }
             await this.handleDefault(query);
         } catch (err) {
-            Logger.error(this, "An error occurred while handling the callback", query.message);
+            DepLogger.error(this, "An error occurred while handling the callback", query.message);
         }
     }
 

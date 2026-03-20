@@ -1,6 +1,6 @@
 import {Commands} from "../config/Commands";
 import TelegramBot, {BotCommand} from "node-telegram-bot-api";
-import {Logger} from "../utils/Logger";
+import {DepLogger} from "../utils/DepLogger";
 
 export class CommandRegistry {
     private bot: TelegramBot;
@@ -11,7 +11,7 @@ export class CommandRegistry {
     }
 
     public async setCommandsList(): Promise<void>  {
-        Logger.debug(this, "Command initialization");
+        DepLogger.debug(this, "Command initialization");
         this.commands.push({
             command: Commands.START,
             description: "Launching the bot"
