@@ -28,17 +28,17 @@ export class QueryHandler {
 
     async handle(query: CallbackQuery): Promise<void> {
         try {
-            if (!query) return;
-            const strategies = this.factory.getStrategies();
-            if ( strategies === undefined) return;
-
-            for (const [key, strategy] of strategies) {
-                if (query.data?.includes(key)) {
-                    await strategy.handle(query);
-                    return;
-                }
-            }
-            await this.handleDefault(query);
+            // if (!query) return;
+            // const strategies = this.factory.getStrategies();
+            // if ( strategies === undefined) return;
+            //
+            // for (const [key, strategy] of strategies) {
+            //     if (query.data?.includes(key)) {
+            //         await strategy.handle(query);
+            //         return;
+            //     }
+            // }
+            // await this.handleDefault(query);
         } catch (err) {
             DepLogger.error(this, "An error occurred while handling the callback", query.message);
         }

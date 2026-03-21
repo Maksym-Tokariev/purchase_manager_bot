@@ -1,23 +1,35 @@
-import {IStrategy} from "../interfaces/IStrategy";
 import TelegramBot from "node-telegram-bot-api";
 import {Formatter} from "../../utils/Formatter";
 import {DataProcessor} from "../DataProcessor";
+import {BaseStrategy} from "./BaseStrategy";
+import {IInputSource} from "../../models/IInputSource";
+import {DeleteResult} from "mongodb";
 
-export class DeleteStrategy implements IStrategy{
-    constructor(private bot: TelegramBot, private data: DataProcessor) {}
+export class DeleteStrategy extends BaseStrategy {
+    constructor(
+        bot: TelegramBot,
+        private data: DataProcessor
+    ) {
+        super(bot);
+    }
 
-    async handle(query: TelegramBot.CallbackQuery): Promise<void> {
+    async handle(query: IInputSource): Promise<void> {
         if (!query.data) return;
         const purchaseId = Formatter.getPurchaseId(query.data);
-        const res = await this.data.deletePurchase(purchaseId);
+        const res: Optional<DeleteResult> = await this.data.deletePurchase(purchaseId);
 
         if (res?.acknowledged) {
             await this.bot.sendMessage(query.message?.chat.id!, "The purchase has been deleted");
-            void this.bot.answerCallbackQuery(query.id);
+            void this.bot.answerCallbackQuery(query.queryId!);
             return
         }
 
         await this.bot.sendMessage(query.message?.chat.id!, "Delete error");
-        void this.bot.answerCallbackQuery(query.id);
+        void this.bot.answerCallbackQuery(query.queryId!);
+    }
+
+
+    canHandle(input: IInputSource): Optional<boolean> {
+        return undefined;
     }
 }

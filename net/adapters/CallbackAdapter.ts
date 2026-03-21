@@ -1,46 +1,50 @@
 import {IInputSource} from "../models/IInputSource";
-import {CallbackQuery} from "node-telegram-bot-api";
+import TelegramBot, {CallbackQuery} from "node-telegram-bot-api";
 
 export class CallbackAdapter implements IInputSource {
     constructor(private query: CallbackQuery) {}
 
-    getUserId(): number | undefined {
+    get userId(): Optional<number> {
         return this.query.from.id;
     }
 
-    getChatId(): number {
+    get chatId(): number {
         return this.query.message?.chat.id!;
     }
 
-    getMessageId(): number | undefined {
+    get message(): Optional<TelegramBot.Message> {
+        return this.query.message;
+    }
+
+    get messageId(): Optional<number> {
         return this.query.message?.message_id;
     }
 
-    getText(): string | undefined {
+    get text(): Optional<string> {
         return undefined;
     }
 
-    getData(): string | undefined {
+    get data(): Optional<string> {
         return this.query.data;
     }
 
-    getQueryId(): string | undefined {
+    get queryId(): Optional<string> {
         return this.query.id;
     }
 
-    getOriginal(): CallbackQuery {
+    get original(): CallbackQuery {
         return this.query;
     }
 
-    getType(): 'message' | 'callback' {
+    get type(): 'message' | 'callback' {
         return 'callback';
     }
 
     isCommand(): boolean {
-        return false; // CallbackQuery не может быть командой
+        return false;
     }
 
-    getCommand(): string | undefined {
+    get command(): Optional<string> {
         return undefined;
     }
 }

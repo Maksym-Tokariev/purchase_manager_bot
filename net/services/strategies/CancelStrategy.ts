@@ -13,9 +13,9 @@ export class CancelStrategy extends BaseStrategy {
      }
 
      async handle(input: IInputSource): Promise<void> {
-          const queryId = input.getQueryId();
-          const userId = input.getUserId()!;
-          const chatId = input.getChatId();
+          const queryId = input.queryId;
+          const userId = input.userId!;
+          const chatId = input.chatId;
 
           if (queryId && !this.state.isInFlow(userId)) {
                void this.bot.answerCallbackQuery(queryId);
@@ -29,8 +29,8 @@ export class CancelStrategy extends BaseStrategy {
 
           this.state.cancelFlow(userId, chatId);
 
-          if (input.getType() === "callback") {
-               await this.bot.editMessageText("The addition has been canceled", {chat_id: chatId, message_id: input.getMessageId()});
+          if (input.type === "callback") {
+               await this.bot.editMessageText("The addition has been canceled", {chat_id: chatId, message_id: input.messageId});
           } else {
                await this.reply(input, "❌ Purchase cancelled")
           }
@@ -38,13 +38,10 @@ export class CancelStrategy extends BaseStrategy {
      }
 
      canHandle(input: IInputSource): boolean | undefined {
-          const text = input.getText();
-          const data = input.getData();
+          const text = input.text;
 
           return text === '/cancel' ||
-              text?.toLowerCase() === 'cancel' ||
-              data === 'purchase_cancel' ||
-              data?.includes('cancel');
+              text?.toLowerCase() === 'cancel';
      }
 
 

@@ -1,26 +1,34 @@
-import {IStrategy} from "../interfaces/IStrategy";
 import TelegramBot from "node-telegram-bot-api";
 import {Formatter} from "../../utils/Formatter";
 import {PurchaseFlowService} from "../PurchaseFlowService";
 import {DataProcessor} from "../DataProcessor";
+import {BaseStrategy} from "./BaseStrategy";
+import {IInputSource} from "../../models/IInputSource";
 
-export class EditStrategy implements IStrategy {
+export class EditStrategy extends BaseStrategy{
     constructor(
-        private bot: TelegramBot,
+        bot: TelegramBot,
         private flow: PurchaseFlowService,
         private data: DataProcessor
-    ) {}
+    ) {
+        super(bot);
+    }
 
-    async handle(query: TelegramBot.CallbackQuery): Promise<void> {
-        if (!query.data) return;
-        const id = Formatter.getPurchaseId(query.data);
+    async handle(input: IInputSource): Promise<void> {
+        if (!input.data) return;
+        const id = Formatter.getPurchaseId(input.data);
         const purchase = await this.data.getPurchase(id);
 
         if (!purchase) {
-            await this.bot.answerCallbackQuery(query.id, {text: "edit error"});
+            await this.bot.answerCallbackQuery(input.queryId!, {text: "edit error"});
             return;
         }
-        await this.flow.startEditFlow(query.from.id, query.message?.chat.id!);
-        await this.bot.answerCallbackQuery(query.id);
+        await this.flow.startEditFlow(input.userId!, input.message?.chat.id!);
+        await this.bot.answerCallbackQuery(input.queryId!);
+    }
+
+
+    canHandle(input: IInputSource): Optional<boolean> {
+        return undefined;
     }
 }

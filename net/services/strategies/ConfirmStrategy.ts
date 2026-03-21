@@ -1,26 +1,29 @@
-import {IStrategy} from "../interfaces/IStrategy";
 import TelegramBot from "node-telegram-bot-api";
 import {Formatter} from "../../utils/Formatter";
 import {DepLogger} from "../../utils/DepLogger";
 import {Purchase} from "../../models/Purchase";
 import {StateManager} from "../StateManager";
 import {DataProcessor} from "../DataProcessor";
+import {BaseStrategy} from "./BaseStrategy";
+import {IInputSource} from "../../models/IInputSource";
 
-export class ConfirmStrategy implements IStrategy {
+export class ConfirmStrategy extends BaseStrategy {
     constructor(
-        private bot: TelegramBot,
+        bot: TelegramBot,
         private state: StateManager,
         private data: DataProcessor
-    ) {}
+    ) {
+        super(bot);
+    }
 
-    async handle(query: TelegramBot.CallbackQuery): Promise<void> {
-        if (!query.message) return;
-        if (!query.data) return;
+    async handle(input: IInputSource): Promise<void> {
+        if (!input.message) return;
+        if (!input.data) return;
 
-        const chatId = query.message.chat.id;
-        const messageId = query.message.message_id;
-        const queryData = query.data;
-        const queryId = query.id;
+        const chatId = input.message.chat.id;
+        const messageId = input.message.message_id;
+        const queryData = input.data;
+        const queryId = input.queryId;
 
         const userId: number = Formatter.getId(queryData);
 
@@ -49,13 +52,18 @@ export class ConfirmStrategy implements IStrategy {
         await this.bot.editMessageText("✅ I added the purchase", {
             reply_markup: {
                 inline_keyboard: [
-                    [ { text: "➕ Add more", callback_data: "add" }, { text: "History", callback_data: "history" } ]
+                    [{text: "➕ Add more", callback_data: "add"}, {text: "History", callback_data: "history"}]
                 ]
             },
             chat_id: chatId,
             message_id: messageId
         });
 
-        void this.bot.answerCallbackQuery(queryId);
+        void this.bot.answerCallbackQuery(queryId!);
+    }
+
+
+    canHandle(input: IInputSource): boolean | undefined {
+        return undefined;
     }
 }

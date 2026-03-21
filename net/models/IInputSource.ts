@@ -1,14 +1,15 @@
 import {CallbackQuery, Message} from "node-telegram-bot-api";
 
 export interface IInputSource {
-    getUserId(): number | undefined;
-    getChatId(): number;
-    getMessageId(): number | undefined;
-    getText(): string | undefined;
-    getData(): string | undefined;
-    getQueryId(): string | undefined;
-    getOriginal(): Message | CallbackQuery;
-    getType(): 'message' | 'callback';
+    get userId(): Optional<number>;
+    get chatId(): number;
+    get message(): Optional<Message>;
+    get messageId(): Optional<number>;
+    get text(): Optional<string>;
+    get data(): Optional<string>;
+    get queryId(): Optional<string>;
+    get original(): Message | CallbackQuery;
+    get type(): 'message' | 'callback';
+    get command(): Optional<string>;
     isCommand(): boolean;
-    getCommand(): string | undefined;
 }

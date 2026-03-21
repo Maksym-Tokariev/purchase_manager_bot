@@ -1,15 +1,13 @@
-import TelegramBot from "node-telegram-bot-api";
-import {MessageRouter} from "./MessageRouter";
-import {QueryHandler} from "./handlers/QueryHandler";
+import TelegramBot, {CallbackQuery, Message} from "node-telegram-bot-api";
 import {Logger} from "../utils/Logger";
+import {EventFactory} from "./factories/EventFactory";
 
 export class InputListener {
     private readonly logger = new Logger(InputListener.name);
 
     constructor(
         private readonly bot: TelegramBot,
-        private readonly router: MessageRouter,
-        private readonly query: QueryHandler,
+        private eventFactory: EventFactory
     ) {
         this.logger.info("InputListener has been initialized");
     }
@@ -17,8 +15,13 @@ export class InputListener {
     public async listen(): Promise<void> {
         this.logger.debug("Start listening");
         this.bot.on('message',
-            async (msg) => await this.router.route(msg));
-        this.bot.on("callback_query",
-            async (query) => await this.query.handle(query));
+            async (msg) => await this.addEvent(msg));
+        this.bot.on('callback_query',
+            async (query) => await this.addEvent(query));
+    }
+
+    async addEvent(input: Message | CallbackQuery): Promise<void> {
+        await this.eventFactory.add(input);
+        this.logger.debug('Event has been added');
     }
 }

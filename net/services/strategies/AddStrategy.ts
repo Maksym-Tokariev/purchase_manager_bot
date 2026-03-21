@@ -12,21 +12,18 @@ export class AddStrategy extends BaseStrategy {
     }
 
     async handle(input: IInputSource): Promise<void> {
-        const chatId = input.getChatId();
-        const userId = input.getUserId()!;
+        const chatId = input.chatId;
+        const userId = input.userId!;
 
         await this.flow.startAddFlow(userId, chatId);
         await this.answerQuery(input);
     }
 
     canHandle(input: IInputSource): boolean | undefined {
-        const text = input.getText();
-        const data = input.getData();
+        const text = input.text;
 
         return text === '/add' ||
-            text?.toLowerCase() === 'Add' ||
-            data === 'purchase_cancel' ||
-            data?.includes('cancel');
+            text?.toLowerCase() === 'Add';
     }
 
 }

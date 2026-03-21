@@ -1,46 +1,50 @@
 import {IInputSource} from "../models/IInputSource";
-import {Message} from "node-telegram-bot-api";
+import TelegramBot, {Message} from "node-telegram-bot-api";
 
 export class MessageAdapter implements IInputSource {
-    constructor(private message: Message) {}
+    constructor(private msg: Message) {}
 
-    getUserId(): number | undefined {
-        return this.message.from?.id;
+    get message(): Optional<TelegramBot.Message> {
+        return this.msg;
     }
 
-    getChatId(): number {
-        return this.message.chat.id;
+    get userId(): number | undefined {
+        return this.msg.from?.id;
     }
 
-    getMessageId(): number | undefined {
-        return this.message.message_id;
+    get chatId(): number {
+        return this.msg.chat.id;
     }
 
-    getText(): string | undefined {
-        return this.message.text;
+    get messageId(): number | undefined {
+        return this.msg.message_id;
     }
 
-    getData(): string | undefined {
+    get text(): string | undefined {
+        return this.msg.text;
+    }
+
+    get data(): string | undefined {
         return undefined;
     }
 
-    getQueryId(): string | undefined {
+    get queryId(): string | undefined {
         return undefined;
     }
 
-    getOriginal(): Message {
-        return this.message;
+    get original(): Message {
+        return this.msg;
     }
 
-    getType(): 'message' | 'callback' {
+    get type(): 'message' | 'callback' {
         return 'message';
     }
 
     isCommand(): boolean {
-        return this.message.text?.startsWith('/') ?? false;
+        return this.msg.text?.startsWith('/') ?? false;
     }
 
-    getCommand(): string | undefined {
-        return this.isCommand() ? this.message.text?.split(' ')[0] : undefined;
+    get command(): string | undefined {
+        return this.isCommand() ? this.msg.text?.split(' ')[0] : undefined;
     }
 }
