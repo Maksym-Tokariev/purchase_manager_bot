@@ -14,8 +14,12 @@ import {StateManager} from "../StateManager";
 import {PurchaseFlowService} from "../PurchaseFlowService";
 import {MessageSender} from "../MessageSender";
 import {IInputSource} from "../../models/IInputSource";
+import {EventListener} from "../../utils/EventListener";
+import {EventManager} from "../EventManager";
+import {Logger} from "../../utils/Logger";
 
-export class StrategyFactory {
+export class StrategyFactory implements EventListener {
+    private logger = new Logger(StrategyFactory.name);
     private strategies: IStrategy[] = [];
 
     constructor(
@@ -23,8 +27,10 @@ export class StrategyFactory {
         private data: DataProcessor,
         private state: StateManager,
         private flow: PurchaseFlowService,
-        private sender: MessageSender
+        private sender: MessageSender,
+        private event: EventManager
     ) {
+        this.subscribe();
         this.strategies = [
             new CancelStrategy(this.bot, this.state),
             new DeleteStrategy(this.bot, this.data),
@@ -38,7 +44,23 @@ export class StrategyFactory {
         ];
     }
 
-    findStrategy(input: IInputSource) {
+    async findStrategy(event: IInputSource) {
+        this.logger.debug('Finding strategy')
+        for (const strategy of this.strategies) {
+            if (strategy.canHandle(event)) {
+                await strategy.handle(event);
+                return;
+            }
+        }
+        this.logger.debug('Strategy not found');
+    }
 
+    async update(event: IInputSource): Promise<void> {
+        this.logger.debug('Update strategy factory');
+        await this.findStrategy(event);
+    }
+
+    async subscribe() {
+        await this.event.subscribe(this);
     }
 }

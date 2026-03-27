@@ -28,7 +28,11 @@ export class HistoryStrategy extends BaseStrategy{
     }
 
 
-    canHandle(input: IInputSource): Optional<boolean> {
-        return undefined;
+    canHandle(event: IInputSource): Optional<boolean> {
+        if (event.text) {
+            return event.text.toLowerCase() === 'history' ||
+                event.text.toLowerCase() === '/history'
+        }
+        return event.data!.includes('history:');
     }
 }

@@ -6,8 +6,10 @@ import {StateManager} from "../StateManager";
 import {DataProcessor} from "../DataProcessor";
 import {BaseStrategy} from "./BaseStrategy";
 import {IInputSource} from "../../models/IInputSource";
+import {Logger} from "../../utils/Logger";
 
 export class ConfirmStrategy extends BaseStrategy {
+    private logger = new Logger(ConfirmStrategy.name);
     constructor(
         bot: TelegramBot,
         private state: StateManager,
@@ -63,7 +65,11 @@ export class ConfirmStrategy extends BaseStrategy {
     }
 
 
-    canHandle(input: IInputSource): boolean | undefined {
-        return undefined;
+    canHandle(event: IInputSource): boolean | undefined {
+        if (!event.data) {
+            this.logger.warn('Data is undefined');
+            return;
+        }
+        return event.data.includes('add:');
     }
 }

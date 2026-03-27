@@ -13,7 +13,8 @@ import {config} from "../config/Config";
 import {InputListener} from "../services/InputListener";
 import {MessageHandler} from "../services/handlers/MessageHandler";
 import {ValidationService} from "../services/validation/ValidationService";
-import {BaseStrategy} from "../services/strategies/BaseStrategy";
+import {EventFactory} from "../services/factories/EventFactory";
+import {EventManager} from "../services/EventManager";
 
 export class ServiceContainer {
     private readonly bot: TelegramBot;
@@ -29,6 +30,8 @@ export class ServiceContainer {
     private readonly data: DataProcessor;
     private readonly message: MessageHandler;
     private readonly validation: ValidationService;
+    private readonly eventFactory: EventFactory;
+    private readonly eventManager: EventManager;
 
     constructor(bot: Bot) {
         this.bot = bot.getTelegramBot();
@@ -37,13 +40,15 @@ export class ServiceContainer {
         this.sender = new MessageSender(this.bot);
         this.data = new DataProcessor(this.mongoService);
         this.state = new StateManager();
+        this.eventManager = new EventManager();
+        this.eventFactory = new EventFactory(this.eventManager);
         this.step = new StepHandler(this.sender, this.state);
         this.flow = new PurchaseFlowService(this.sender, this.state, this.step, this.validation);
         this.command = new CommandHandler(this.bot, this.flow, this.data, this.sender, this.data, this.state);
         this.message = new MessageHandler(this.command, this.flow, this.sender, this.data);
         this.query = new QueryHandler(this.bot, this.data, this.state, this.flow, this.sender);
         this.router = new MessageRouter(this.command, this.message, this.state, this.flow);
-        this.inputListener = new InputListener(this.bot, this.router, this.query);
+        this.inputListener = new InputListener(this.bot, this.eventFactory);
     }
 
     get mongo(): MongoService {

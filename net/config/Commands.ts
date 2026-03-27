@@ -5,5 +5,5 @@ export enum Commands {
     HISTORY = "history",
     ADD = "add",
     OPTIONS = "options",
-    COMMAND_LIST = "command_list"
+    COMMAND_LIST = "commands"
 }

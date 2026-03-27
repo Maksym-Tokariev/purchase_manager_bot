@@ -7,7 +7,7 @@ import {MessageSender} from "../MessageSender";
 import {StrategyFactory} from "../factories/StrategyFactory";
 
 export class QueryHandler {
-    private factory: StrategyFactory;
+    // private factory: StrategyFactory;
 
     constructor(
         private bot: TelegramBot,
@@ -16,13 +16,13 @@ export class QueryHandler {
         private flow: PurchaseFlowService,
         private sender: MessageSender
     ) {
-        this.factory = new StrategyFactory(
-            this.bot,
-            this.data,
-            this.state,
-            this.flow,
-            this.sender
-        );
+        // this.factory = new StrategyFactory(
+        //     this.bot,
+        //     this.data,
+        //     this.state,
+        //     this.flow,
+        //     this.sender
+        // );
     }
 
 

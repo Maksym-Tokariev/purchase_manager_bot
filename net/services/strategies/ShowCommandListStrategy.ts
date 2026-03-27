@@ -20,7 +20,10 @@ export class ShowCommandListStrategy extends BaseStrategy{
     }
 
 
-    canHandle(input: IInputSource): Optional<boolean> {
-        return undefined;
+    canHandle(event: IInputSource): Optional<boolean> {
+        const text = event.text;
+        if (!text)
+            return;
+        return text.toLowerCase() === '/commands';
     }
 }

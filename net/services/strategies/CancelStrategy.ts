@@ -18,7 +18,7 @@ export class CancelStrategy extends BaseStrategy {
           const chatId = input.chatId;
 
           if (queryId && !this.state.isInFlow(userId)) {
-               void this.bot.answerCallbackQuery(queryId);
+               await this.bot.answerCallbackQuery(queryId);
                return;
           }
 
@@ -32,16 +32,19 @@ export class CancelStrategy extends BaseStrategy {
           if (input.type === "callback") {
                await this.bot.editMessageText("The addition has been canceled", {chat_id: chatId, message_id: input.messageId});
           } else {
-               await this.reply(input, "❌ Purchase cancelled")
+               await this.reply(input, "❌ Purchase cancelled");
           }
           await this.answerQuery(input);
      }
 
-     canHandle(input: IInputSource): boolean | undefined {
-          const text = input.text;
+     canHandle(event: IInputSource): boolean | undefined {
+          const text = event.text;
 
-          return text === '/cancel' ||
-              text?.toLowerCase() === 'cancel';
+          if (!event.data) {
+               return text === '/cancel' ||
+                   text?.toLowerCase() === 'cancel';
+          }
+          return event.data.includes('purchase_cancel');
      }
 
 

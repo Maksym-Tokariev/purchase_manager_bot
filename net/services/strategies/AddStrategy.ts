@@ -2,8 +2,11 @@ import TelegramBot from "node-telegram-bot-api";
 import {PurchaseFlowService} from "../PurchaseFlowService";
 import {IInputSource} from "../../models/IInputSource";
 import {BaseStrategy} from "./BaseStrategy";
+import {Logger} from "../../utils/Logger";
 
 export class AddStrategy extends BaseStrategy {
+    private logger = new Logger(AddStrategy.name);
+
     constructor(
         bot: TelegramBot,
         private flow: PurchaseFlowService
@@ -19,11 +22,12 @@ export class AddStrategy extends BaseStrategy {
         await this.answerQuery(input);
     }
 
-    canHandle(input: IInputSource): boolean | undefined {
-        const text = input.text;
-
-        return text === '/add' ||
-            text?.toLowerCase() === 'Add';
+    canHandle(event: IInputSource): boolean | undefined {
+        if (!event.data) {
+            this.logger.warn('Undefined data');
+            return event.text === '/add' || event.text === 'Add';
+        }
+        return event.data.includes('add:');
     }
 
 }

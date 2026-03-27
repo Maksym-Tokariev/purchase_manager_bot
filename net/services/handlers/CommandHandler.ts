@@ -9,11 +9,10 @@ import {MessageSender} from "../MessageSender";
 import {config} from "../../config/Config";
 import {StrategyFactory} from "../factories/StrategyFactory";
 import {StateManager} from "../StateManager";
-import {InputAdapterFactory} from "../factories/InputAdapterFactory";
 
 export class CommandHandler {
     private commandService: CommandRegistry;
-    private factory: StrategyFactory;
+    // private factory: StrategyFactory;
 
     constructor(
         private bot: TelegramBot,
@@ -28,21 +27,21 @@ export class CommandHandler {
             .then(() => DepLogger.info(this, "Commands have been set"))
             .catch(err => DepLogger.error(this, "Error installing commands", err.message));
         DepLogger.info(this, "Command handler was initialized");
-        this.factory = new StrategyFactory(
-            this.bot,
-            this.data,
-            this.state,
-            this.flow,
-            this.sender
-        );
+        // this.factory = new StrategyFactory(
+        //     this.bot,
+        //     this.data,
+        //     this.state,
+        //     this.flow,
+        //     this.sender
+        // );
     }
 
     async handle(message: Message): Promise<void> {
         DepLogger.debug(this, `Command from ${message.from?.username} : ${message.text}`);
         try {
-            const input = InputAdapterFactory.create(message);
-
-            const strategy = this.factory.findStrategy(input);
+            // const input = InputAdapterFactory.create(message);
+            //
+            // const strategy = this.factory.findStrategy(input);
         } catch (err: any) {
             DepLogger.error(this, err.message, err.stack);
         }
