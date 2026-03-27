@@ -1,5 +1,5 @@
 import {IInputSource} from "../models/IInputSource";
-import TelegramBot, {CallbackQuery} from "node-telegram-bot-api";
+import TelegramBot, {CallbackQuery, User} from "node-telegram-bot-api";
 
 export class CallbackAdapter implements IInputSource {
     constructor(private query: CallbackQuery) {}
@@ -18,6 +18,10 @@ export class CallbackAdapter implements IInputSource {
 
     get messageId(): Optional<number> {
         return this.query.message?.message_id;
+    }
+
+    get from(): Optional<Optional<User>> {
+        return this.query.from;
     }
 
     get text(): Optional<string> {

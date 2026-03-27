@@ -1,5 +1,5 @@
 import {IInputSource} from "../models/IInputSource";
-import TelegramBot, {Message} from "node-telegram-bot-api";
+import TelegramBot, {Message, User} from "node-telegram-bot-api";
 
 export class MessageAdapter implements IInputSource {
     constructor(private msg: Message) {}
@@ -22,6 +22,10 @@ export class MessageAdapter implements IInputSource {
 
     get text(): string | undefined {
         return this.msg.text;
+    }
+
+    get from(): Optional<Optional<User>> {
+        return this.msg.from;
     }
 
     get data(): string | undefined {

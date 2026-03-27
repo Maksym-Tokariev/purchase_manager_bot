@@ -17,10 +17,11 @@ import {IInputSource} from "../../models/IInputSource";
 import {EventListener} from "../../utils/EventListener";
 import {EventManager} from "../EventManager";
 import {Logger} from "../../utils/Logger";
+import {StartStrategy} from "../strategies/StartStrategy";
 
 export class StrategyFactory implements EventListener {
-    private logger = new Logger(StrategyFactory.name);
-    private strategies: IStrategy[] = [];
+    private readonly logger = new Logger(StrategyFactory.name);
+    private readonly strategies: IStrategy[] = [];
 
     constructor(
         private bot: TelegramBot,
@@ -39,7 +40,8 @@ export class StrategyFactory implements EventListener {
             new DateStrategy(this.bot, this.flow),
             new AddStrategy(this.bot, this.flow),
             new AddCategoryStrategy(this.bot),
-            new HistoryStrategy(this.bot, this.data, this.sender)
+            new HistoryStrategy(this.bot, this.data, this.sender),
+            new StartStrategy(this.bot)
         ];
     }
 
