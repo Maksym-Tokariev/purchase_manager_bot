@@ -8,7 +8,7 @@ export class MongoService {
     private db?: Db;
     private purchases?: Collection<Purchase>
 
-    constructor(private uri: string, private dbName: string) {
+    constructor(uri: string, private dbName: string) {
         this.client = new MongoClient(uri);
     }
 
