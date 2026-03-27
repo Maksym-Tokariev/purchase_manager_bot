@@ -37,7 +37,7 @@ export class ServiceContainer {
     constructor(bot: Bot) {
         this.bot = bot.getTelegramBot();
         this.validation = new ValidationService();
-        this.mongoService = new MongoService(config.mongo.uri, config.mongo.dbName);
+        this.mongoService = new MongoService(config.mongo.uri!, config.mongo.dbName!);
         this.sender = new MessageSender(this.bot);
         this.data = new DataProcessor(this.mongoService);
         this.state = new StateManager();

@@ -17,7 +17,7 @@ export class MongoService {
             await this.client.connect();
             this.db = this.client.db(this.dbName);
             this.purchases = this.db.collection<Purchase>("purchases");
-            this.logger.info("Connect to db:", this.dbName);
+            this.logger.info("Connect to db");
         } catch (err) {
             this.logger.error("Db connection error: ", err);
             throw err;
