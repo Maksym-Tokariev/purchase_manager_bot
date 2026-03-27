@@ -27,7 +27,7 @@ export class EditStrategy extends BaseStrategy{
         await this.bot.answerCallbackQuery(input.queryId!);
     }
 
-    canHandle(event: IInputSource): Optional<boolean> {
+    async canHandle(event: IInputSource): Promise<Optional<boolean>> {
         if (event.type === 'message')
             return;
         return event.data!.includes('edit:');

@@ -14,7 +14,7 @@ export class EventFactory {
 
     async add(input: Message | CallbackQuery): Promise<void> {
         this.logger.debug('Add an event')
-        const event: Optional<IInputSource> = await this.define(input);
+        const event: Optional<IInputSource> = await this.createEvent(input);
         if (!event) {
             this.logger.warn('Empty event');
             return;
@@ -22,7 +22,7 @@ export class EventFactory {
         await this.events.notify(event);
     }
 
-    async define(event: Message | CallbackQuery): Promise<Optional<IInputSource>> {
+    async createEvent(event: Message | CallbackQuery): Promise<Optional<IInputSource>> {
         if ('text' in event)
             return new MessageAdapter(event);
         if ('data' in event)

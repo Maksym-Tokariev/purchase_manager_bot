@@ -30,7 +30,6 @@ export class StrategyFactory implements EventListener {
         private sender: MessageSender,
         private event: EventManager
     ) {
-        this.subscribe();
         this.strategies = [
             new CancelStrategy(this.bot, this.state),
             new DeleteStrategy(this.bot, this.data),
@@ -45,14 +44,16 @@ export class StrategyFactory implements EventListener {
     }
 
     async findStrategy(event: IInputSource) {
-        this.logger.debug('Finding strategy')
+        this.logger.debug('Search for a strategy');
+        this.logger.debug(`${event.text}`);
         for (const strategy of this.strategies) {
-            if (strategy.canHandle(event)) {
+            if (await strategy.canHandle(event)) {
+                this.logger.debug('A strategy has been found');
                 await strategy.handle(event);
                 return;
             }
         }
-        this.logger.debug('Strategy not found');
+        this.logger.warn('Strategy not found');
     }
 
     async update(event: IInputSource): Promise<void> {

@@ -20,7 +20,7 @@ export class ShowCommandListStrategy extends BaseStrategy{
     }
 
 
-    canHandle(event: IInputSource): Optional<boolean> {
+    async canHandle(event: IInputSource): Promise<Optional<boolean>> {
         const text = event.text;
         if (!text)
             return;

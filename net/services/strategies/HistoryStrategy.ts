@@ -17,22 +17,25 @@ export class HistoryStrategy extends BaseStrategy{
         super(bot);
     }
 
-    async handle(input: IInputSource): Promise<void> {
-        if (!input.message) return;
-        const chatId = input.message.chat.id;
-        const userId = input.userId!;
+    async handle(event: IInputSource): Promise<void> {
+        if (!event.message) return;
+        const chatId = event.message.chat.id;
+        const userId = event.userId!;
 
         const data: PurchaseDTO[] = await this.data.getLastPurchases(userId, config.history_limit);
         await this.sender.sendHistory(chatId, data);
-        void this.bot.answerCallbackQuery(input.queryId!);
+
+        if (event.queryId) {
+            await this.bot.answerCallbackQuery(event.queryId);
+        }
     }
 
 
-    canHandle(event: IInputSource): Optional<boolean> {
+    async canHandle(event: IInputSource): Promise<Optional<boolean>> {
         if (event.text) {
             return event.text.toLowerCase() === 'history' ||
                 event.text.toLowerCase() === '/history'
         }
-        return event.data!.includes('history:');
+        return false;
     }
 }

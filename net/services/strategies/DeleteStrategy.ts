@@ -29,7 +29,7 @@ export class DeleteStrategy extends BaseStrategy {
     }
 
 
-    canHandle(event: IInputSource): Optional<boolean> {
+    async canHandle(event: IInputSource): Promise<Optional<boolean>> {
         if (event.type === 'callback')
             return event.data!.includes('delete:');
         return false;

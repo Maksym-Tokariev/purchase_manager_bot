@@ -37,7 +37,7 @@ export class CancelStrategy extends BaseStrategy {
           await this.answerQuery(input);
      }
 
-     canHandle(event: IInputSource): boolean | undefined {
+     async canHandle(event: IInputSource): Promise<Optional<boolean>> {
           const text = event.text;
 
           if (!event.data) {

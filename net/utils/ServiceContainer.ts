@@ -50,7 +50,8 @@ export class ServiceContainer {
         this.query = new QueryHandler(this.bot, this.data, this.state, this.flow, this.sender);
         this.router = new MessageRouter(this.command, this.message, this.state, this.flow);
         this.inputListener = new InputListener(this.bot, this.eventFactory);
-        new StrategyFactory(this.bot, this.data, this.state, this.flow, this.sender, this.eventManager);
+        const statFactory = new StrategyFactory(this.bot, this.data, this.state, this.flow, this.sender, this.eventManager);
+        statFactory.subscribe();
     }
 
     get mongo(): MongoService {

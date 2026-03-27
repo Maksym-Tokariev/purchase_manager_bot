@@ -20,7 +20,7 @@ export class AddCategoryStrategy extends BaseStrategy{
     }
 
 
-    canHandle(event: IInputSource): Optional<boolean> {
+    async canHandle(event: IInputSource): Promise<Optional<boolean>> {
         return false;
     }
 }

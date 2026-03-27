@@ -15,7 +15,7 @@ export class DateStrategy extends BaseStrategy{
     }
 
 
-    canHandle(event: IInputSource): Optional<boolean> {
+    async canHandle(event: IInputSource): Promise<Optional<boolean>> {
         if (event.type === 'callback' || !event.text)
             return false;
         return event.text.toLowerCase() === 'today' || event.text.toLowerCase() === 'yesterday';

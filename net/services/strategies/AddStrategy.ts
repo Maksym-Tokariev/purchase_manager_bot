@@ -22,9 +22,8 @@ export class AddStrategy extends BaseStrategy {
         await this.answerQuery(input);
     }
 
-    canHandle(event: IInputSource): boolean | undefined {
+    async canHandle(event: IInputSource): Promise<Optional<boolean>> {
         if (!event.data) {
-            this.logger.warn('Undefined data');
             return event.text === '/add' || event.text === 'Add';
         }
         return event.data.includes('add:');

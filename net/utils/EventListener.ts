@@ -1,3 +1,3 @@
 export interface EventListener {
-    update(data: any): void;
+    update(data: any): Promise<void>;
 }

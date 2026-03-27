@@ -65,9 +65,8 @@ export class ConfirmStrategy extends BaseStrategy {
     }
 
 
-    canHandle(event: IInputSource): boolean | undefined {
+    async canHandle(event: IInputSource): Promise<Optional<boolean>> {
         if (!event.data) {
-            this.logger.warn('Data is undefined');
             return;
         }
         return event.data.includes('add:');
