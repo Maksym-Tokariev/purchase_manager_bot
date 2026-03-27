@@ -8,6 +8,7 @@ export class EventManager implements IBotEvent {
     private observers: EventListener[] = [];
 
     async subscribe(observer: EventListener): Promise<void> {
+        this.logger.debug(`Add observer ${observer}`);
         this.observers.push(observer);
     }
 
@@ -17,6 +18,7 @@ export class EventManager implements IBotEvent {
 
     async notify(event: IInputSource): Promise<void> {
         this.logger.debug('Notify observers');
+        this.logger.debug(`Count of observes ${this.observers.length}`)
         for (const observer of this.observers) {
             observer.update(event);
         }

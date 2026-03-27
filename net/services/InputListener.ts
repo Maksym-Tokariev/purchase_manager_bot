@@ -22,6 +22,5 @@ export class InputListener {
 
     async addEvent(input: Message | CallbackQuery): Promise<void> {
         await this.eventFactory.add(input);
-        this.logger.debug('Event has been added');
     }
 }

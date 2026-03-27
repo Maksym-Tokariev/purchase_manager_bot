@@ -1,8 +1,9 @@
 import {Collection, Db, DeleteResult, MongoClient, UpdateResult, WithId} from "mongodb";
 import {Purchase} from "../models/Purchase";
-import {DepLogger} from "../utils/DepLogger";
+import {Logger} from "../utils/Logger";
 
 export class MongoService {
+    private readonly logger = new Logger(MongoService.name);
     private client: MongoClient;
     private db?: Db;
     private purchases?: Collection<Purchase>
@@ -16,16 +17,16 @@ export class MongoService {
             await this.client.connect();
             this.db = this.client.db(this.dbName);
             this.purchases = this.db.collection<Purchase>("purchases");
-            DepLogger.info(this, "Connect to db:", this.dbName);
+            this.logger.info("Connect to db:", this.dbName);
         } catch (err) {
-            DepLogger.error(this, "Db connection error: ", err);
+            this.logger.error("Db connection error: ", err);
             throw err;
         }
     }
 
     public async disconnect(): Promise<void> {
         await this.client.close();
-        DepLogger.info(this, "Connected has been closed");
+        this.logger.info("Connected has been closed");
     }
 
     public async insert(purchase: Purchase): Promise<void> {

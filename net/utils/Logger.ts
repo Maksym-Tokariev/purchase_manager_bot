@@ -8,6 +8,15 @@ export class Logger {
         private context: string
     ) {}
 
+    private getColor(level: LogLevel): string {
+        switch (level) {
+            case LOG_LEVEL.DEBUG: return "\x1b[36m";
+            case LOG_LEVEL.INFO:  return "\x1b[32m";
+            case LOG_LEVEL.WARN:  return "\x1b[33m";
+            default: return "\x1b[0m";
+        }
+    }
+
     private formatMessage(level: LogLevel, message: string, context?: string): string {
         const parts: string[] = [];
         if (config.logging.showTimestamp) {
@@ -20,7 +29,10 @@ export class Logger {
             parts.push(`[${context}]`);
         }
         parts.push(message);
-        return parts.join(' ');
+
+        const color = this.getColor(level);
+        const reset = "\x1b[0m"
+        return `${color}${parts.join(" ")}${reset}`;
     }
 
     private shouldLog(level: LogLevel): boolean {

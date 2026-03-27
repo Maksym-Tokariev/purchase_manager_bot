@@ -39,7 +39,6 @@ export class Bot {
     }
 
     public async start(): Promise<void> {
-        this.logger.info('Bot started successfully!');
         await this.container.mongo.connect();
     }
 
