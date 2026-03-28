@@ -37,9 +37,7 @@ export class CommandHandler {
 
         const command: string = message.text!.split(" ")[0];
 
-        if (command === "/ref")
-            await this.handleRef(message.from?.id!, message.chat.id);
-        else if (command === "/options")
+        if (command === "/options")
             await this.HandleOptions(message);
         else if (command === "/add")
             await this.handleAdd(message);
@@ -49,11 +47,6 @@ export class CommandHandler {
             await this.handleHistory(message.from?.id!, message.chat.id);
         else
             await this.commandNotFound(message);
-    }
-
-    private async handleRef(userId: number, chatId: number): Promise<void> {
-        const link = `${process.env.URL_TO_BOT}?start=ref_${userId}`;
-        await this.bot.sendMessage(chatId, `Your referral link: ${link}`);
     }
 
     private async commandNotFound(message: Message): Promise<void> {

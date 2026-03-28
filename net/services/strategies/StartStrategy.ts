@@ -11,7 +11,6 @@ export class StartStrategy extends BaseStrategy {
         if (input.text?.length! > 6) {
             const refID = input.text?.slice(7)!;
 
-
             await this.bot.sendMessage(input.chatId, `You followed the link user with ID ${refID}`)
         }
 
@@ -30,8 +29,8 @@ export class StartStrategy extends BaseStrategy {
     }
 
     async canHandle(event: IInputSource): Promise<Optional<boolean>> {
-        if (event.type === 'message')
-            return event.text === '/start';
+        if (event.text)
+            return event.text.includes('/start');
         return false;
     }
 }
