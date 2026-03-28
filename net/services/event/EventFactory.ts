@@ -1,5 +1,5 @@
 import {Logger} from "../../utils/Logger";
-import {EventManager} from "../EventManager";
+import {EventManager} from "./EventManager";
 import {CallbackQuery, Message} from "node-telegram-bot-api";
 import {MessageAdapter} from "../../adapters/MessageAdapter";
 import {CallbackAdapter} from "../../adapters/CallbackAdapter";

@@ -13,9 +13,9 @@ import {config} from "../config/Config";
 import {InputListener} from "../services/InputListener";
 import {MessageHandler} from "../services/handlers/MessageHandler";
 import {ValidationService} from "../services/validation/ValidationService";
-import {EventFactory} from "../services/factories/EventFactory";
-import {EventManager} from "../services/EventManager";
-import {StrategyFactory} from "../services/factories/StrategyFactory";
+import {EventFactory} from "../services/event/EventFactory";
+import {EventManager} from "../services/event/EventManager";
+import {StrategyFactory} from "../services/strategies/StrategyFactory";
 
 export class ServiceContainer {
     private readonly bot: TelegramBot;

@@ -1,7 +1,7 @@
-import {IObservable} from "./interfaces/IObservable";
-import {EventListener} from "../utils/EventListener";
-import {IInputSource} from "../models/IInputSource";
-import {Logger} from "../utils/Logger";
+import {IObservable} from "../interfaces/IObservable";
+import {EventListener} from "../../utils/EventListener";
+import {IInputSource} from "../../models/IInputSource";
+import {Logger} from "../../utils/Logger";
 
 export class EventManager implements IObservable {
     private logger = new Logger(EventManager.name);

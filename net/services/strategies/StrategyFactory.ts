@@ -1,13 +1,13 @@
 import {IStrategy} from "../interfaces/IStrategy";
-import {CancelStrategy} from "../strategies/CancelStrategy";
-import {DeleteStrategy} from "../strategies/DeleteStrategy";
-import {ConfirmStrategy} from "../strategies/ConfirmStrategy";
-import {EditStrategy} from "../strategies/EditStrategy";
-import {ShowCommandListStrategy} from "../strategies/ShowCommandListStrategy";
-import {DateStrategy} from "../strategies/DateStrategy";
-import {AddStrategy} from "../strategies/AddStrategy";
-import {AddCategoryStrategy} from "../strategies/AddCategoryStrategy";
-import {HistoryStrategy} from "../strategies/HistoryStrategy";
+import {CancelStrategy} from "./CancelStrategy";
+import {DeleteStrategy} from "./DeleteStrategy";
+import {ConfirmStrategy} from "./ConfirmStrategy";
+import {EditStrategy} from "./EditStrategy";
+import {ShowCommandListStrategy} from "./ShowCommandListStrategy";
+import {DateStrategy} from "./DateStrategy";
+import {AddStrategy} from "./AddStrategy";
+import {AddCategoryStrategy} from "./AddCategoryStrategy";
+import {HistoryStrategy} from "./HistoryStrategy";
 import TelegramBot from "node-telegram-bot-api";
 import {DataProcessor} from "../DataProcessor";
 import {StateManager} from "../StateManager";
@@ -15,9 +15,10 @@ import {PurchaseFlowService} from "../PurchaseFlowService";
 import {MessageSender} from "../MessageSender";
 import {IInputSource} from "../../models/IInputSource";
 import {EventListener} from "../../utils/EventListener";
-import {EventManager} from "../EventManager";
+import {EventManager} from "../event/EventManager";
 import {Logger} from "../../utils/Logger";
-import {StartStrategy} from "../strategies/StartStrategy";
+import {StartStrategy} from "./StartStrategy";
+import {HelpStrategy} from "./HelpStrategy";
 
 export class StrategyFactory implements EventListener {
     private readonly logger = new Logger(StrategyFactory.name);
@@ -32,16 +33,17 @@ export class StrategyFactory implements EventListener {
         private event: EventManager
     ) {
         this.strategies = [
-            new CancelStrategy(this.bot, this.state),
-            new DeleteStrategy(this.bot, this.data),
-            new ConfirmStrategy(this.bot, this.state, this.data),
-            new EditStrategy(this.bot, this.flow, this.data),
+            new CancelStrategy(bot, this.state),
+            new DeleteStrategy(bot, this.data),
+            new ConfirmStrategy(bot, this.state, this.data),
+            new EditStrategy(bot, this.flow, this.data),
             new ShowCommandListStrategy(this.bot),
-            new DateStrategy(this.bot, this.flow),
-            new AddStrategy(this.bot, this.flow),
+            new DateStrategy(bot, this.flow),
+            new AddStrategy(bot, this.flow),
             new AddCategoryStrategy(this.bot),
-            new HistoryStrategy(this.bot, this.data, this.sender),
-            new StartStrategy(this.bot)
+            new HistoryStrategy(bot, this.data, this.sender),
+            new StartStrategy(bot),
+            new HelpStrategy(bot)
         ];
     }
 

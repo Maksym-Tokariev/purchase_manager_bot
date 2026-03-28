@@ -1,6 +1,6 @@
 import TelegramBot, {CallbackQuery, Message} from "node-telegram-bot-api";
 import {Logger} from "../utils/Logger";
-import {EventFactory} from "./factories/EventFactory";
+import {EventFactory} from "./event/EventFactory";
 
 export class InputListener {
     private readonly logger = new Logger(InputListener.name);

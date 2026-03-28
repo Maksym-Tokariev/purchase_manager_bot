@@ -4,7 +4,7 @@ import {DataProcessor} from "../DataProcessor";
 import {StateManager} from "../StateManager";
 import {PurchaseFlowService} from "../PurchaseFlowService";
 import {MessageSender} from "../MessageSender";
-import {StrategyFactory} from "../factories/StrategyFactory";
+import {StrategyFactory} from "../strategies/StrategyFactory";
 
 export class QueryHandler {
     // private factory: StrategyFactory;

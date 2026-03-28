@@ -7,7 +7,7 @@ import {Keyboards} from "../../keyboards/Keyboards";
 import {PurchaseDTO} from "../../models/PurchaseDTO";
 import {MessageSender} from "../MessageSender";
 import {config} from "../../config/Config";
-import {StrategyFactory} from "../factories/StrategyFactory";
+import {StrategyFactory} from "../strategies/StrategyFactory";
 import {StateManager} from "../StateManager";
 
 export class CommandHandler {
@@ -48,11 +48,7 @@ export class CommandHandler {
 
         const command: string = message.text!.split(" ")[0];
 
-        if (command === "/start")
-            await this.handleStart(message);
-        else if (command === "/help")
-            await this.handleHelp(message.chat.id);
-        else if (command === "/ref")
+        if (command === "/ref")
             await this.handleRef(message.from?.id!, message.chat.id);
         else if (command === "/options")
             await this.HandleOptions(message);
@@ -64,34 +60,6 @@ export class CommandHandler {
             await this.handleHistory(message.from?.id!, message.chat.id);
         else
             await this.commandNotFound(message);
-    }
-
-    private async handleStart(message: Message): Promise<void> {
-        if (message.text?.length! > 6) {
-            const refID = message.text?.slice(7)!;
-
-
-            await this.bot.sendMessage(message.chat.id, `You followed the link user with ID ${refID}`)
-        }
-
-        const name: string = message.from?.first_name ? message.from?.first_name! : message.from?.username!
-
-        await this.bot.sendMessage(message.chat.id,
-            `Hello, ${name}. \nWith my help you can track your spending.\nSend me what you bought ande when, and I'll compile statistics for you`, {
-                reply_markup: {
-                    keyboard: [
-                        [{text: "Add"}],
-                        [{text: "Help"}],
-                        [{text: "History"}]
-                    ]
-                }
-            });
-    }
-
-    private async handleHelp(chatId: number): Promise<void> {
-        await this.bot.sendMessage(chatId,
-            "Send purchase detail using /add, next follow the instruction"
-        );
     }
 
     private async handleRef(userId: number, chatId: number): Promise<void> {
