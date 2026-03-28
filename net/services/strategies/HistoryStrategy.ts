@@ -1,5 +1,4 @@
-import {IStrategy} from "../interfaces/IStrategy";
-import TelegramBot, {CallbackQuery} from "node-telegram-bot-api";
+import TelegramBot from "node-telegram-bot-api";
 import {PurchaseDTO} from "../../models/PurchaseDTO";
 import {config} from "../../config/Config";
 import {DataProcessor} from "../DataProcessor";

@@ -1,4 +1,3 @@
-import {IStrategy} from "../interfaces/IStrategy";
 import TelegramBot from "node-telegram-bot-api";
 import {BaseStrategy} from "./BaseStrategy";
 import {IInputSource} from "../../models/IInputSource";
