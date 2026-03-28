@@ -19,6 +19,7 @@ import {EventManager} from "../event/EventManager";
 import {Logger} from "../../utils/Logger";
 import {StartStrategy} from "./StartStrategy";
 import {HelpStrategy} from "./HelpStrategy";
+import {RefStrategy} from "./RefStrategy";
 
 export class StrategyFactory implements EventListener {
     private readonly logger = new Logger(StrategyFactory.name);
@@ -43,7 +44,8 @@ export class StrategyFactory implements EventListener {
             new AddCategoryStrategy(this.bot),
             new HistoryStrategy(bot, this.data, this.sender),
             new StartStrategy(bot),
-            new HelpStrategy(bot)
+            new HelpStrategy(bot),
+            new RefStrategy(bot)
         ];
     }
 

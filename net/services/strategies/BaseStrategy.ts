@@ -5,7 +5,7 @@ import TelegramBot from "node-telegram-bot-api";
 export abstract class BaseStrategy implements IStrategy {
     protected constructor(protected bot: TelegramBot) {}
 
-    abstract canHandle(input: IInputSource): Promise<Optional<boolean>>;
+    abstract canHandle(event: IInputSource): Promise<Optional<boolean>>;
     abstract handle(input: IInputSource): Promise<void>;
 
     protected async reply(input: IInputSource, text: string, options?: any): Promise<void> {
