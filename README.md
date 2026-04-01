@@ -7,7 +7,7 @@ expanded or modified
 
 ## Quick Start
 
-First, you need to create a new .env file containing your database (MongoDB) settings
+First, you need to create a new `.env` file containing your database (MongoDB) settings
 
 ### Installation and start
 
@@ -21,15 +21,15 @@ npm ts-node net/Starter.ts
 When you launch your bot based on this logic, it will perform a simple function: 
 accepting purchases from users, entering them into the 
 database, and retrieving them on request.
-You can view the list of commands in the config/Commands.ts file. 
+You can view the list of commands in the `config/Commands.ts` file. 
 There, you can add a command; you will then need to register it in 
-services/CommandRegistry.ts and add the corresponding strategy to the strategies 
+`services/CommandRegistry.ts` and add the corresponding strategy to the strategies 
 directory, inheriting it from BaseStrategy, and to the strategies array in 
-the strategies/StrategyFactory.ts file.    
+the `strategies/StrategyFactory.ts` file.    
 
 To define a strategy in the `canHandle` method, 
 you need to specify the condition under which your strategy should be executed, 
-for example, StartStrategy.ts is executed when the user enters “/start”:
+for example, `StartStrategy.ts` is executed when the user enters `/start`:
 ```ts
 async canHandle(event: IInputSource): Promise<Optional<boolean>> {
     if (event.text) {
@@ -39,7 +39,7 @@ async canHandle(event: IInputSource): Promise<Optional<boolean>> {
 }
 ```
 To add new buttons, you need to 
-create a static method in the keyboards/Buttons.ts file. 
-You can then add these buttons to the keyboard in the Keyboards.ts file.
+create a static method in the `keyboards/Buttons.ts` file. 
+You can then add these buttons to the keyboard in the `Keyboards.ts` file.
 
-New classes must be added to ServiceContainer.ts.
+New classes must be added to `ServiceContainer.ts`.
