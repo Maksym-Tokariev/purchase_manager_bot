@@ -4,14 +4,10 @@ import {MessageSender} from "../services/MessageSender";
 import {StateManager} from "../services/StateManager";
 import {StepHandler} from "../services/handlers/StepHandler";
 import {PurchaseFlowService} from "../services/PurchaseFlowService";
-import {CommandHandler} from "../services/handlers/CommandHandler";
-import {QueryHandler} from "../services/handlers/QueryHandler";
-import {MessageRouter} from "../services/MessageRouter";
 import TelegramBot from "node-telegram-bot-api";
 import {DataProcessor} from "../services/DataProcessor";
 import {config} from "../config/Config";
 import {InputListener} from "../services/InputListener";
-import {MessageHandler} from "../services/handlers/MessageHandler";
 import {ValidationService} from "../services/validation/ValidationService";
 import {EventFactory} from "../services/event/EventFactory";
 import {EventManager} from "../services/event/EventManager";
@@ -25,11 +21,7 @@ export class ServiceContainer {
     private readonly state: StateManager;
     private readonly step: StepHandler;
     private readonly flow: PurchaseFlowService
-    private readonly command: CommandHandler
-    private readonly query: QueryHandler;
-    private readonly router: MessageRouter;
     private readonly data: DataProcessor;
-    private readonly message: MessageHandler;
     private readonly validation: ValidationService;
     private readonly eventFactory: EventFactory;
     private readonly eventManager: EventManager;
@@ -45,10 +37,6 @@ export class ServiceContainer {
         this.eventFactory = new EventFactory(this.eventManager);
         this.step = new StepHandler(this.sender, this.state);
         this.flow = new PurchaseFlowService(this.sender, this.state, this.step, this.validation);
-        this.command = new CommandHandler(this.bot, this.flow, this.data, this.sender, this.data, this.state);
-        this.message = new MessageHandler(this.command, this.flow, this.sender, this.data);
-        this.query = new QueryHandler(this.bot, this.data, this.state, this.flow, this.sender);
-        this.router = new MessageRouter(this.command, this.message, this.state, this.flow);
         this.inputListener = new InputListener(this.bot, this.eventFactory);
         const statFactory = new StrategyFactory(this.bot, this.data, this.state, this.flow, this.sender, this.eventManager);
         statFactory.subscribe();

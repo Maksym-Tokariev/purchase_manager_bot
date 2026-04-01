@@ -14,7 +14,7 @@ import {StateManager} from "../StateManager";
 import {PurchaseFlowService} from "../PurchaseFlowService";
 import {MessageSender} from "../MessageSender";
 import {IInputSource} from "../../models/IInputSource";
-import {EventListener} from "../../utils/EventListener";
+import {EventListener} from "../event/EventListener";
 import {EventManager} from "../event/EventManager";
 import {Logger} from "../../utils/Logger";
 import {StartStrategy} from "./StartStrategy";

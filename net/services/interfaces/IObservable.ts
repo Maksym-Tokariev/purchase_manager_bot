@@ -1,4 +1,4 @@
-import {EventListener} from "../../utils/EventListener";
+import {EventListener} from "../event/EventListener";
 
 export interface IObservable {
     subscribe(observer: EventListener): Promise<void>;

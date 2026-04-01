@@ -1,5 +1,5 @@
 import {IObservable} from "../interfaces/IObservable";
-import {EventListener} from "../../utils/EventListener";
+import {EventListener} from "./EventListener";
 import {IInputSource} from "../../models/IInputSource";
 import {Logger} from "../../utils/Logger";
 
