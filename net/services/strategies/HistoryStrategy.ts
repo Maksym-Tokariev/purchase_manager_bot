@@ -35,6 +35,6 @@ export class HistoryStrategy extends BaseStrategy{
             return event.text.toLowerCase() === 'history' ||
                 event.text.toLowerCase() === '/history'
         }
-        return false;
+        return event.data ? event.data === 'history' : false;
     }
 }
