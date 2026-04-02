@@ -54,6 +54,12 @@ export class StrategyFactory implements EventListener {
     async findStrategy(event: IInputSource) {
         this.logger.debug('Search for a strategy');
         this.logger.debug(`${event.text}`);
+
+        if (event.userId && this.state.isInFlow(event.userId) && event.text) {
+            await this.flow.handleFlow(event.userId, event.chatId, event.text);
+            return;
+        }
+
         for (const strategy of this.strategies) {
             if (await strategy.canHandle(event)) {
                 this.logger.debug('A strategy has been found');

@@ -5,7 +5,6 @@ import {Keyboards} from "../keyboards/Keyboards";
 import {PurchaseState} from "../models/PurchaseState";
 import {PurchaseDTO} from "../models/PurchaseDTO";
 import {SendMessageError} from "../errors/SendMessageError";
-import {Purchase} from "../models/Purchase";
 
 export class MessageSender {
 
