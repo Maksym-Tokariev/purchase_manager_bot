@@ -3,7 +3,6 @@ import {PurchaseStep} from "../models/PurchaseStep";
 import {MessageSender} from "./MessageSender";
 import {StepHandler} from "./handlers/StepHandler";
 import {ValidationService} from "./validation/ValidationService";
-import {Purchase} from "../models/Purchase";
 
 export class PurchaseFlowService {
     constructor(

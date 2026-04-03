@@ -1,6 +1,5 @@
 import TelegramBot from "node-telegram-bot-api";
 import {Formatter} from "../../utils/Formatter";
-import {DepLogger} from "../../utils/DepLogger";
 import {Purchase} from "../../models/Purchase";
 import {StateManager} from "../StateManager";
 import {DataProcessor} from "../DataProcessor";
@@ -30,17 +29,17 @@ export class ConfirmStrategy extends BaseStrategy {
 
         const userId: number = Formatter.getId(queryData);
 
-        DepLogger.debug(this, `UserId : ${userId}, queryId : ${queryId}`);
+        this.logger.debug(`UserId : ${userId}, queryId : ${queryId}`);
 
         if (userId === 0) {
-            DepLogger.warn(this, "User id is 0");
+            this.logger.warn("User id is 0");
             await this.bot.sendMessage(chatId, "I'm so sorry, I have a problem. Try again later");
             return;
         }
 
         const purchase: Purchase | null = this.state.completeFlow(userId, chatId);
         if (!purchase) {
-            DepLogger.warn(this, "State is undefined");
+            this.logger.warn("State is undefined");
             await this.bot.sendMessage(chatId, "I'm so sorry, I have a problem. Try again later");
             return;
         }
@@ -48,7 +47,7 @@ export class ConfirmStrategy extends BaseStrategy {
         try {
             await this.data.addPurchase(purchase);
         } catch (err) {
-            DepLogger.error(this, "A purchase saving error", err);
+            this.logger.error("A purchase saving error", err);
             await this.bot.sendMessage(chatId, "There is en error, please try again");
         }
 

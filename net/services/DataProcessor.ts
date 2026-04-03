@@ -1,13 +1,14 @@
 import {Purchase} from "../models/Purchase";
 import {MongoService} from "./MongoService";
-import {DepLogger} from "../utils/DepLogger";
 import {Formatter} from "../utils/Formatter";
 import {DateFormate} from "../models/DateFormate";
 import {PurchaseDTO} from "../models/PurchaseDTO";
 import {DeleteResult, WithId} from "mongodb";
+import {Logger} from "../utils/Logger";
 
 
 export class DataProcessor {
+    private readonly logger = new Logger(DataProcessor.name);
     private mongo: MongoService;
 
     constructor(mongo: MongoService) {
@@ -18,7 +19,7 @@ export class DataProcessor {
         try {
             await this.mongo.insert(purchase);
         } catch (err) {
-            DepLogger.error(this, "Error adding purchase:", purchase);
+            this.logger.error("Error adding purchase:", purchase);
             throw err;
         }
     }
@@ -27,7 +28,7 @@ export class DataProcessor {
         try {
             return  await this.mongo.delete(purchaseId);
         } catch (err: any) {
-            DepLogger.error(this, err.message, err.stack);
+            this.logger.error(err.message, err.stack);
         }
     }
 
@@ -35,7 +36,7 @@ export class DataProcessor {
         try {
             await this.mongo.update(purchaseId, input);
         } catch (err: any) {
-            DepLogger.error(this, err.message, err.stack);
+            this.logger.error(err.message, err.stack);
         }
     }
 
@@ -43,7 +44,7 @@ export class DataProcessor {
         try {
             return await this.mongo.find(purchaseId);
         } catch (err: any) {
-            DepLogger.error(this, err.message, err.stack);
+            this.logger.error(err.message, err.stack);
             return null;
         }
     }
@@ -67,7 +68,7 @@ export class DataProcessor {
             let purchase: PurchaseDTO = {} as PurchaseDTO;
 
             if (!element.purchaseId) {
-                DepLogger.warn(this, "Purchase without id", element)
+                this.logger.warn("Purchase without id", element)
                 return;
             }
 

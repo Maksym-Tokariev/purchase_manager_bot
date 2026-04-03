@@ -1,5 +1,4 @@
 import {Bot} from "./Bot"
-import {DepLogger} from "./utils/DepLogger";
 import {Logger} from "./utils/Logger";
 
 const bot = new Bot();

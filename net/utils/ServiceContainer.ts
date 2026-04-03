@@ -13,8 +13,12 @@ import {EventFactory} from "../services/event/EventFactory";
 import {EventManager} from "../services/event/EventManager";
 import {StrategyFactory} from "../services/strategies/StrategyFactory";
 import {StrategyRegistry} from "../services/strategies/StrategyRegistry";
+import {CommandRegistry} from "../services/CommandRegistry";
+import {Logger} from "./Logger";
 
 export class ServiceContainer {
+    private readonly logger = new Logger(ServiceContainer.name);
+
     private readonly bot: TelegramBot;
     private readonly mongoService: MongoService;
     private readonly inputListener: InputListener;
@@ -29,6 +33,8 @@ export class ServiceContainer {
 
     constructor(bot: Bot) {
         this.bot = bot.getTelegramBot();
+        new CommandRegistry(this.bot).setCommandsList().catch((e: Error) => this.logger.error(e.message, e.stack));
+
         this.validation = new ValidationService();
         this.mongoService = new MongoService(config.mongo.uri!, config.mongo.dbName!);
         this.sender = new MessageSender(this.bot);

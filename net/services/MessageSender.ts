@@ -1,22 +1,22 @@
 import TelegramBot from "node-telegram-bot-api";
 import {PurchaseStep} from "../models/PurchaseStep";
-import {DepLogger} from "../utils/DepLogger";
 import {Keyboards} from "../keyboards/Keyboards";
 import {PurchaseState} from "../models/PurchaseState";
 import {PurchaseDTO} from "../models/PurchaseDTO";
 import {SendMessageError} from "../errors/SendMessageError";
+import {Logger} from "../utils/Logger";
 
 export class MessageSender {
+    private readonly logger = new Logger(MessageSender.name);
 
-    constructor(private readonly bot: TelegramBot) {
-    }
+    constructor(private readonly bot: TelegramBot) {}
 
     public async sendMessage(chatId: any, text: string): Promise<void> {
         try {
             await this.bot.sendMessage(chatId, text);
         } catch (err: unknown) {
             if (err instanceof SendMessageError) {
-                DepLogger.error(this, err.message, err.stack);
+                this.logger.error(err.message, err.stack);
             }
         }
     }
@@ -61,7 +61,7 @@ export class MessageSender {
                     });
             }
         } catch (err: any) {
-            DepLogger.error(this, err.message, err.stack);
+            this.logger.error(err.message, err.stack);
         }
     }
 
@@ -75,7 +75,7 @@ export class MessageSender {
                     });
                 }
             } catch (err: any) {
-                DepLogger.error(this, err.message, err.stack);
+                this.logger.error(err.message, err.stack);
             }
         } else
             await this.bot.sendMessage(chatId, "Your shopping list is empty.\nAdd purchases and try again");

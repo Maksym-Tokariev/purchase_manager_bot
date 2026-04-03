@@ -1,10 +1,11 @@
 import {PurchaseState} from "../models/PurchaseState";
 import {PurchaseStep} from "../models/PurchaseStep";
-import {DepLogger} from "../utils/DepLogger";
 import {Purchase} from "../models/Purchase";
 import {Formatter} from "../utils/Formatter";
+import {Logger} from "../utils/Logger";
 
 export class StateManager {
+    private readonly logger = new Logger(StateManager.name);
     private states: Map<number, PurchaseState> = new Map();
 
     public getCurrState(userId: number): PurchaseState | undefined {
@@ -44,13 +45,13 @@ export class StateManager {
 
         this.clearState(userId, chatId);
 
-        DepLogger.debug(this, "Flow completed for user:", userId);
+        this.logger.debug("Flow completed for user:", userId);
         return data;
     }
 
     cancelFlow(userId: number, chatId: number): void {
         this.clearState(userId, chatId);
-        DepLogger.debug(this, "Flow cancelled for user:", userId);
+        this.logger.debug("Flow cancelled for user:", userId);
     }
 
 
