@@ -12,6 +12,7 @@ import {ValidationService} from "../services/validation/ValidationService";
 import {EventFactory} from "../services/event/EventFactory";
 import {EventManager} from "../services/event/EventManager";
 import {StrategyFactory} from "../services/strategies/StrategyFactory";
+import {StrategyRegistry} from "../services/strategies/StrategyRegistry";
 
 export class ServiceContainer {
     private readonly bot: TelegramBot;
@@ -38,8 +39,14 @@ export class ServiceContainer {
         this.step = new StepHandler(this.sender, this.state);
         this.flow = new PurchaseFlowService(this.sender, this.state, this.step, this.validation);
         this.inputListener = new InputListener(this.bot, this.eventFactory);
-        const statFactory = new StrategyFactory(this.bot, this.data, this.state, this.flow, this.sender, this.eventManager);
+
+
+        const statFactory = new StrategyFactory(this.state, this.flow, this.eventManager, this.register().strategies);
         statFactory.subscribe();
+    }
+
+    private register() {
+        return new StrategyRegistry(this.bot, this.data, this.state, this.flow, this.sender);
     }
 
     get mongo(): MongoService {

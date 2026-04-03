@@ -1,7 +1,7 @@
-import {EventListener} from "../event/EventListener";
+import {IEventListener} from "./IEventListener";
 
 export interface IObservable {
-    subscribe(observer: EventListener): Promise<void>;
-    unsubscribe(observer: EventListener): Promise<void>;
+    subscribe(observer: IEventListener): Promise<void>;
+    unsubscribe(observer: IEventListener): Promise<void>;
     notify(data: any): Promise<void>;
 }

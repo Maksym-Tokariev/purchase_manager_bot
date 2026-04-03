@@ -1,3 +1,3 @@
-export interface EventListener {
+export interface IEventListener {
     update(data: any): Promise<void>;
 }
