@@ -27,4 +27,12 @@ export class Buttons {
     public static editPurchase(purchaseId: string) {
         return { text: "Edit", callback_data: `edit:${purchaseId}` }
     }
+
+    public static addMore(userId: number) {
+        return {text: "➕ Add more", callback_data: `add:${userId}`}
+    }
+
+    public static history() {
+        return {text: "History", callback_data: "history"};
+    }
 }

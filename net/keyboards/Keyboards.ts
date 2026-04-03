@@ -16,6 +16,12 @@ export class Keyboards {
         };
     }
 
+    static getCompletedAddKeyboard(userId: number) {
+        return {
+            inline_keyboard: [[Buttons.addMore(userId), Buttons.history()]]
+        }
+    }
+
     static getDateKeyboard() {
         return {
           inline_keyboard: [

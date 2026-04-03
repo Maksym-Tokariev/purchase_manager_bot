@@ -7,6 +7,7 @@ import {DataProcessor} from "../DataProcessor";
 import {BaseStrategy} from "./BaseStrategy";
 import {IInputSource} from "../../models/IInputSource";
 import {Logger} from "../../utils/Logger";
+import {Keyboards} from "../../keyboards/Keyboards";
 
 export class ConfirmStrategy extends BaseStrategy {
     private logger = new Logger(ConfirmStrategy.name);
@@ -52,16 +53,14 @@ export class ConfirmStrategy extends BaseStrategy {
         }
 
         await this.bot.editMessageText("✅ I added the purchase", {
-            reply_markup: {
-                inline_keyboard: [
-                    [{text: "➕ Add more", callback_data: "add"}, {text: "History", callback_data: "history"}]
-                ]
-            },
+            reply_markup: Keyboards.getCompletedAddKeyboard(userId),
             chat_id: chatId,
             message_id: messageId
         });
 
-        void this.bot.answerCallbackQuery(queryId!);
+        if (queryId) {
+            void this.bot.answerCallbackQuery(queryId);
+        }
     }
 
 
