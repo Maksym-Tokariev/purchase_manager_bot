@@ -6,7 +6,7 @@ import {StepHandler} from "../services/handlers/StepHandler";
 import {PurchaseFlowService} from "../services/PurchaseFlowService";
 import TelegramBot from "node-telegram-bot-api";
 import {DataProcessor} from "../services/DataProcessor";
-import {config} from "../config/Config";
+import {appConfig} from "../config/AppConfig";
 import {InputListener} from "../services/InputListener";
 import {ValidationService} from "../services/validation/ValidationService";
 import {EventFactory} from "../services/event/EventFactory";
@@ -36,7 +36,7 @@ export class ServiceContainer {
         new CommandRegistry(this.bot).setCommandsList().catch((e: Error) => this.logger.error(e.message, e.stack));
 
         this.validation = new ValidationService();
-        this.mongoService = new MongoService(config.mongo.uri!, config.mongo.dbName!);
+        this.mongoService = new MongoService(appConfig.mongo.uri!, appConfig.mongo.dbName!);
         this.sender = new MessageSender(this.bot);
         this.data = new DataProcessor(this.mongoService);
         this.state = new StateManager();

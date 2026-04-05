@@ -1,4 +1,4 @@
-import {config} from "./config/Config";
+import {appConfig} from "./config/AppConfig";
 import TelegramBot from "node-telegram-bot-api";
 import {ServiceContainer} from "./utils/ServiceContainer";
 import {Logger} from "./utils/Logger";
@@ -10,7 +10,7 @@ export class Bot {
     private readonly logger = new Logger(Bot.name);
 
     public constructor() {
-        this.bot = new TelegramBot(config.token, { polling: true });
+        this.bot = new TelegramBot(appConfig.token, { polling: true });
         this.container = new ServiceContainer(this);
 
         this.initialize();

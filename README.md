@@ -21,7 +21,7 @@ npm ts-node net/Starter.ts
 When you launch your bot based on this logic, it will perform a simple function: 
 accepting purchases from users, entering them into the 
 database, and retrieving them on request.
-You can view the list of commands in the `config/Commands.ts` file. 
+You can view the list of commands in the `appConfig/Commands.ts` file. 
 There, you can add a command; you will then need to register it in 
 `services/CommandRegistry.ts` and add the corresponding strategy to the strategies 
 directory, inheriting it from BaseStrategy, and to the strategies array in 

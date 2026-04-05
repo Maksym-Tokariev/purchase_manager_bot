@@ -1,6 +1,6 @@
 import TelegramBot from "node-telegram-bot-api";
 import {PurchaseDTO} from "../../models/PurchaseDTO";
-import {config} from "../../config/Config";
+import {appConfig} from "../../config/AppConfig";
 import {DataProcessor} from "../DataProcessor";
 import {MessageSender} from "../MessageSender";
 import {BaseStrategy} from "./BaseStrategy";
@@ -21,7 +21,7 @@ export class HistoryStrategy extends BaseStrategy{
         const chatId = event.message.chat.id;
         const userId = event.userId!;
 
-        const data: PurchaseDTO[] = await this.data.getLastPurchases(userId, config.history_limit);
+        const data: PurchaseDTO[] = await this.data.getLastPurchases(userId, appConfig.history_limit);
         await this.sender.sendHistory(chatId, data);
 
         if (event.queryId) {

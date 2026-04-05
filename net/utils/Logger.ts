@@ -1,8 +1,8 @@
-import {LOG_LEVEL, LOG_LEVELS, LogLevel} from "../config/Logging";
-import {config} from "../config/Config";
+import {LOG_LEVEL, LOG_LEVELS, LogLevel} from "../config/LoggingConfig";
+import {appConfig} from "../config/AppConfig";
 
 export class Logger {
-    private readonly level: LogLevel = config.logging.level;
+    private readonly level: LogLevel = appConfig.logging.level;
 
     constructor(
         private context: string
@@ -19,13 +19,13 @@ export class Logger {
 
     private formatMessage(level: LogLevel, message: string, context?: string): string {
         const parts: string[] = [];
-        if (config.logging.showTimestamp) {
+        if (appConfig.logging.showTimestamp) {
             parts.push(`[${new Date().toISOString()}]`);
         }
-        if (config.logging.showLevel) {
+        if (appConfig.logging.showLevel) {
             parts.push(`[${level.toUpperCase()}]`);
         }
-        if (config.logging.showContext) {
+        if (appConfig.logging.showContext) {
             parts.push(`[${context}]`);
         }
         parts.push(message);

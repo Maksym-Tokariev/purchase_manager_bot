@@ -1,12 +1,12 @@
 import * as dotenv from 'dotenv';
 import * as path from 'path';
-import {LOG_LEVEL} from "./Logging";
+import {LOG_LEVEL} from "./LoggingConfig";
 
 dotenv.config({
     path: path.resolve(process.cwd(), '.env')
 });
 
-export const config = {
+export const appConfig = {
     token: process.env.API_KEY_BOT || "",
     history_limit: 10,
     mongo: {
