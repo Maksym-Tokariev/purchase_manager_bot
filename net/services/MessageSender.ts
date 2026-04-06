@@ -9,7 +9,8 @@ import {Logger} from "../utils/Logger";
 export class MessageSender {
     private readonly logger = new Logger(MessageSender.name);
 
-    constructor(private readonly bot: TelegramBot) {}
+    constructor(private readonly bot: TelegramBot) {
+    }
 
     public async sendMessage(chatId: any, text: string): Promise<void> {
         try {
@@ -57,8 +58,8 @@ export class MessageSender {
                 case PurchaseStep.EDIT:
                     await this.bot.sendMessage(chatId,
                         "Choose the parameter you want to change", {
-                        reply_markup: Keyboards.getEditParameter()
-                    });
+                            reply_markup: Keyboards.getEditParameter()
+                        });
             }
         } catch (err: any) {
             this.logger.error(err.message, err.stack);
@@ -66,18 +67,19 @@ export class MessageSender {
     }
 
     async sendHistory(chatId: number, data: PurchaseDTO[]): Promise<void> {
-        if (data.length > 0) {
-            try {
-                await this.bot.sendMessage(chatId, "✏️ History of the last 10 purchases");
-                for (const purchase of data) {
-                    await this.bot.sendMessage(chatId, purchase.value, {
-                        reply_markup: Keyboards.getPurchaseOptionKeyboard(purchase.id)
-                    });
-                }
-            } catch (err: any) {
-                this.logger.error(err.message, err.stack);
-            }
-        } else
+        if (data.length === 0) {
             await this.bot.sendMessage(chatId, "Your shopping list is empty.\nAdd purchases and try again");
+            return;
+        }
+        try {
+            await this.bot.sendMessage(chatId, "✏️ History of the last 10 purchases");
+            for (const purchase of data) {
+                await this.bot.sendMessage(chatId, purchase.value, {
+                    reply_markup: Keyboards.getPurchaseOptionKeyboard(purchase.id)
+                });
+            }
+        } catch (err: any) {
+            this.logger.error(err.message, err.stack);
+        }
     }
 }
