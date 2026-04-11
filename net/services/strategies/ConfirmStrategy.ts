@@ -40,7 +40,7 @@ export class ConfirmStrategy extends BaseStrategy {
         const purchase: Purchase | null = this.state.completeFlow(userId, chatId);
         if (!purchase) {
             this.logger.warn("State is undefined");
-            await this.bot.sendMessage(chatId, "I'm so sorry, I have a problem. Try again later");
+            await this.bot.sendMessage(chatId, "I'm so sorry, I have a problem. Try again");
             return;
         }
 

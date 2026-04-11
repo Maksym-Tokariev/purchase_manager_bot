@@ -4,8 +4,11 @@ import {PurchaseFlowService} from "../PurchaseFlowService";
 import {DataProcessor} from "../DataProcessor";
 import {BaseStrategy} from "./BaseStrategy";
 import {IInputSource} from "../../models/IInputSource";
+import {StrategyError} from "../../errors/StrategyError";
+import {Logger} from "../../utils/Logger";
 
-export class EditStrategy extends BaseStrategy{
+export class EditInputStrategy extends BaseStrategy{
+    private readonly logger = new Logger(EditInputStrategy.name);
     constructor(
         bot: TelegramBot,
         private flow: PurchaseFlowService,
@@ -16,13 +19,6 @@ export class EditStrategy extends BaseStrategy{
 
     async handle(input: IInputSource): Promise<void> {
         if (!input.data) return;
-        const id = Formatter.getPurchaseId(input.data);
-        const purchase = await this.data.getPurchase(id);
-
-        if (!purchase) {
-            await this.bot.answerCallbackQuery(input.queryId!, {text: "edit error"});
-            return;
-        }
         await this.flow.startEditFlow(input.userId!, input.message?.chat.id!);
         await this.bot.answerCallbackQuery(input.queryId!);
     }
@@ -30,6 +26,6 @@ export class EditStrategy extends BaseStrategy{
     async canHandle(event: IInputSource): Promise<Optional<boolean>> {
         if (event.type === 'message')
             return;
-        return event.data!.includes('edit:');
+        return event.data!.includes('purchase_edit');
     }
 }

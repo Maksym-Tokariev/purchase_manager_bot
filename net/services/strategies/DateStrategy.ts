@@ -10,7 +10,7 @@ export class DateStrategy extends BaseStrategy{
 
     async handle(query: IInputSource): Promise<void> {
         if (!query.message) return;
-        await this.flow.handleFlow(query.userId!, query.message?.chat.id, query.data!);
+        await this.flow.handleFlow(query.userId!, query.message?.chat.id, query);
         void this.bot.answerCallbackQuery(query.queryId!);
     }
 

@@ -7,7 +7,7 @@ import {PurchaseFlowService} from "../PurchaseFlowService";
 import {MessageSender} from "../MessageSender";
 import {DeleteStrategy} from "./DeleteStrategy";
 import {ConfirmStrategy} from "./ConfirmStrategy";
-import {EditStrategy} from "./EditStrategy";
+import {EditInputStrategy} from "./EditInputStrategy";
 import {ShowCommandListStrategy} from "./ShowCommandListStrategy";
 import {DateStrategy} from "./DateStrategy";
 import {AddStrategy} from "./AddStrategy";
@@ -17,6 +17,7 @@ import {StartStrategy} from "./StartStrategy";
 import {HelpStrategy} from "./HelpStrategy";
 import {RefStrategy} from "./RefStrategy";
 import {OptionStrategy} from "./OptionStrategy";
+import {StartEditNameStrategy} from "./StartEditNameStrategy";
 
 export class StrategyRegistry {
     private readonly _strategies: Set<IStrategy> = new Set<IStrategy>();
@@ -31,7 +32,7 @@ export class StrategyRegistry {
         this._strategies.add(new CancelStrategy(bot, this.state));
         this._strategies.add(new DeleteStrategy(bot, this.data));
         this._strategies.add(new ConfirmStrategy(bot, this.state, this.data));
-        this._strategies.add(new EditStrategy(bot, this.flow, this.data));
+        this._strategies.add(new EditInputStrategy(bot, this.flow, this.data));
         this._strategies.add(new ShowCommandListStrategy(this.bot));
         this._strategies.add(new DateStrategy(bot, this.flow));
         this._strategies.add(new AddStrategy(bot, this.flow));
@@ -41,6 +42,7 @@ export class StrategyRegistry {
         this._strategies.add(new HelpStrategy(bot));
         this._strategies.add(new RefStrategy(bot));
         this._strategies.add(new OptionStrategy(bot));
+        this._strategies.add(new StartEditNameStrategy(bot, state, sender));
     }
 
     get strategies(): Set<IStrategy> {

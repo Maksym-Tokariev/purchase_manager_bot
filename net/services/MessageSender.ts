@@ -55,11 +55,18 @@ export class MessageSender {
                         }
                     )
                     break;
-                case PurchaseStep.EDIT:
+
+                case PurchaseStep.EDIT_IN:
                     await this.bot.sendMessage(chatId,
                         "Choose the parameter you want to change", {
                             reply_markup: Keyboards.getEditParameter()
                         });
+                    break;
+
+                case PurchaseStep.EDIT_NAME:
+                    await this.bot.sendMessage(chatId, "Enter a new name for the purchase", {
+                        reply_markup: Keyboards.getCancelKeyboard()
+                    });
             }
         } catch (err: any) {
             this.logger.error(err.message, err.stack);

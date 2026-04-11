@@ -3,8 +3,10 @@ import {PurchaseStep} from "../../models/PurchaseStep";
 import {MessageSender} from "../MessageSender";
 import {ValidationDTO} from "../../models/ValidationDTO";
 import {StateManager} from "../StateManager";
+import {Logger} from "../../utils/Logger";
 
 export class StepHandler {
+    private readonly logger = new Logger(StepHandler.name);
 
     constructor(
         private sender: MessageSender,
@@ -40,7 +42,17 @@ export class StepHandler {
                 }
                 await this.handleDate(userId, chatId, input.date, state);
                 break;
-
+            case PurchaseStep.EDIT_NAME:
+                if (!input?.name) {
+                    await this.sender.sendMessage(chatId, "Incorrect name");
+                    return;
+                }
+                await this.editName(userId, chatId, input.name, state);
+                break;
+            case PurchaseStep.EDIT_PRICE:
+                break;
+            case PurchaseStep.EDIT_DATE:
+                break;
             default:
                 await this.setIdle(userId, state);
         }
@@ -71,6 +83,26 @@ export class StepHandler {
         this.state.updateStep(userId, PurchaseStep.CONFIRM);
 
         await this.sender.sendStepMessage(userId, chatId, state.currentStep, state);
+    }
+
+    async editName(userId: number, chatId: number, name: string, state: PurchaseState) {
+        if (!chatId || !name) {
+            this.logger.warn('Chat id or name are undefined');
+            return;
+        }
+
+        this.state.updateData(userId, {name: name});
+        this.state.updateStep(userId, PurchaseStep.CONFIRM);
+
+        await this.sender.sendStepMessage(userId, chatId, state.currentStep, state)
+    }
+
+    async editPrice(userId: number, chatId: number, price: number, state: PurchaseState) {
+
+    }
+
+    async editDate(userId: number, chatId: number, date: Date, state: PurchaseState) {
+
     }
 
     async setIdle(userId: number, state: PurchaseState): Promise<void> {

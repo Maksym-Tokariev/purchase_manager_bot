@@ -24,7 +24,7 @@ export class DataProcessor {
         }
     }
 
-    public async deletePurchase(purchaseId: string): Promise<DeleteResult | undefined> {
+    public async deletePurchase(purchaseId: string): Promise<Optional<DeleteResult>> {
         try {
             return  await this.mongo.delete(purchaseId);
         } catch (err: any) {
@@ -40,7 +40,7 @@ export class DataProcessor {
         }
     }
 
-    public async getPurchase(purchaseId: string): Promise<WithId<Purchase> | null> {
+    public async getPurchase(purchaseId: string): Promise<Nullable<WithId<Purchase>>> {
         try {
             return await this.mongo.find(purchaseId);
         } catch (err: any) {
