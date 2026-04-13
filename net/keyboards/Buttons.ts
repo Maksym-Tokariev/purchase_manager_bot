@@ -16,6 +16,10 @@ export class Buttons {
         return {text: "🗑️ Cancel", callback_data: "cancel_category"};
     }
 
+    public static get cancelEdit() {
+        return { text: "🗑️ Cancel", callback_data: "cancel_edit" }
+    }
+
     public static get commands() {
         return {text: "Check commands", callback_data: "command_list"};
     }

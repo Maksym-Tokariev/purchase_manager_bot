@@ -39,6 +39,14 @@ export class Keyboards {
         };
     }
 
+    static getCancelEditKeyboard() {
+        return {
+            inline_keyboard: [
+                [ Buttons.cancelEdit ]
+            ]
+        }
+    }
+
     static getAddCategoryKeyboard() {
         return {
             inline_keyboard: [[ Buttons.cancelCategory ]]
@@ -60,25 +68,6 @@ export class Keyboards {
         };
     }
 
-    static getEditInlineKeyboard() {
-        return {
-            inline_keyboard: [
-                [
-                    { text: "✏️ Name", callback_data: "edit_name" },
-                    { text: "💰 Price", callback_data: "edit_price" }
-                ],
-                [
-                    { text: "📅 Date", callback_data: "edit_date" },
-                    { text: "🏷️ Tag", callback_data: "edit_tag" }
-                ],
-                [
-                    { text: "✅ Save", callback_data: "edit_done" },
-                    { text: "❌ Undo", callback_data: "edit_cancel" }
-                ]
-            ]
-        };
-    }
-
     static getEditParameter() {
         return {
             inline_keyboard: [
@@ -92,7 +81,7 @@ export class Keyboards {
                     { text: "Date", callback_data: "edit_date" }
                 ],
                 [
-                    { text: "🗑️ Cancel", callback_data: "purchase_cancel" },
+                    Buttons.cancelEdit
                 ]
             ]
         };
