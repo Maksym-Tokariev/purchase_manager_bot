@@ -93,7 +93,6 @@ export class Keyboards {
                 ],
                 [
                     { text: "🗑️ Cancel", callback_data: "purchase_cancel" },
-                    { text: "➕ Add category", callback_data: "purchase_add_category" }
                 ]
             ]
         };

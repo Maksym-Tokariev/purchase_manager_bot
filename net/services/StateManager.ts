@@ -6,61 +6,67 @@ import {Logger} from "../utils/Logger";
 
 export class StateManager {
     private readonly logger = new Logger(StateManager.name);
-    private states: Map<number, PurchaseState> = new Map();
+    private states: Map<number, PurchaseState[]> = new Map();
 
-    public getCurrState(userId: number): PurchaseState | undefined {
-        return this.states.get(userId);
+    public getStack(userId: number): PurchaseState[] {
+        return this.states.get(userId) ?? [];
+    }
+    
+    public getCurrState(userId: number): PurchaseState {
+        const stack: PurchaseState[] = this.getStack(userId);
+        return stack[stack.length - 1];
     }
 
     public isInFlow(userId: number): boolean {
-        const state = this.states.get(userId);
-        return state !== undefined && state.currentStep !== PurchaseStep.IDLE;
+        const curr = this.getCurrState(userId);
+        return curr !== undefined && curr.currentStep !== PurchaseStep.IDLE;
     }
 
-    startFlow(userId: number, chatId: number, step: PurchaseStep): void {
-        this.states.set(userId, {
-            userId: userId,
-            chatId: chatId,
+    public startFlow(userId: number, chatId: number, step: PurchaseStep): void {
+        const stack = this.getStack(userId);
+        stack.push({
+            userId,
+            chatId,
             currentStep: step,
             data: {}
         });
+        this.states.set(userId, stack);
     }
 
     updateStep(userId: number, step: PurchaseStep): void {
-        const state = this.states.get(userId);
+        const state = this.getCurrState(userId);
         if (state) state.currentStep = step;
     }
 
     updateData(userId: number, data: Partial<PurchaseState['data']>): void {
-        const state = this.states.get(userId);
-        if (state) state.data = {...state.data, ...data};
+        const curr = this.getCurrState(userId);
+        if (curr) curr.data = {...curr.data, ...data};
     }
 
     completeFlow(userId: number, chatId: number): Purchase | null {
-        const state = this.states.get(userId);
+        const stack = this.getStack(userId);
+        const curr = stack.pop();
 
-        if (!state) return null;
+        if (!curr) return null;
 
-        const data = Formatter.toPurchase(state);
-
-        this.clearState(userId, chatId);
+        const data = Formatter.toPurchase(curr);
 
         this.logger.debug("Flow completed for user:", userId);
         return data;
     }
 
     cancelFlow(userId: number, chatId: number): void {
-        this.clearState(userId, chatId);
-        this.logger.debug("Flow cancelled for user:", userId);
+        const stack = this.getStack(userId);
+        const curr = stack.pop();
+
+        if (curr) {
+            this.logger.debug("Flow cancelled for user:", userId);
+        }
     }
 
-
-    private clearState(userId: number, chatId: number): void {
-        this.states.set(userId, {
-            userId: userId,
-            chatId: chatId,
-            currentStep: PurchaseStep.IDLE,
-            data: {}
-        });
+    public resetAllFlows(userId: number): void {
+        this.states.set(userId, []);
+        this.logger.debug("All flows reset for user:", userId);
     }
+
 }

@@ -5,8 +5,8 @@ export enum PurchaseStep {
     DATE = 'date',
     CONFIRM = 'confirm',
     EDIT_IN = 'edit',
-    EDIT_NAME = 'e_name',
-    EDIT_PRICE = 'e_price',
-    EDIT_DATE = 'e_date',
-    EDIT_VAL = 'e_val',
+    EDIT_NAME = 'edit_name',
+    EDIT_PRICE = 'edit_price',
+    EDIT_DATE = 'edit_date',
+    EDIT_VAL = 'edit_val',
 }

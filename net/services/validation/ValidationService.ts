@@ -1,15 +1,19 @@
 import {PurchaseStep} from "../../models/PurchaseStep";
 import {ValidationDTO} from "../../models/ValidationDTO";
+import {Logger} from "../../utils/Logger";
 
 export class ValidationService {
+    private readonly logger = new Logger(ValidationService.name);
 
     public async validate(input: string, step: PurchaseStep): Promise<ValidationDTO> {
+        this.logger.debug('Validation value: ', input);
+
         switch (step) {
-            case PurchaseStep.NAME:
+            case PurchaseStep.NAME || PurchaseStep.EDIT_NAME:
                 return await this.validateName(input);
-            case PurchaseStep.PRICE:
+            case PurchaseStep.PRICE || PurchaseStep.EDIT_PRICE:
                 return await this.validatePrice(input);
-            case PurchaseStep.DATE:
+            case PurchaseStep.DATE || PurchaseStep.EDIT_DATE:
                 return this.validateDate(input);
         }
         return { valid: false, error: "Validation error" }

@@ -36,9 +36,6 @@ export class PurchaseFlowService {
             await this.handleMessageInputToFlow(userId, chatId, input.text);
         }
 
-        if (input.type === 'callback' && input.data) {
-            await this.handleCallbackInputToFlow(userId, chatId, input.data);
-        }
     }
 
     private async handleMessageInputToFlow(userId: number, chatId: number, text: string) {
@@ -46,6 +43,7 @@ export class PurchaseFlowService {
 
         if (!state) return;
 
+        this.logger.debug('Step ', state.currentStep)
         const validation = await this.validator.validate(text, state.currentStep);
 
         if (!validation.valid) {
@@ -54,10 +52,6 @@ export class PurchaseFlowService {
         }
         await this.step.handle(userId, chatId, validation.value, state);
         return;
-    }
-
-    private async handleCallbackInputToFlow(userId: number, chatId: number, queryData: any) {
-
     }
 
     private async setTimeout(userId: number, chatId: number): Promise<void> {

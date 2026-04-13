@@ -17,6 +17,7 @@ export class StrategyFactory implements IEventListener {
     ) {}
 
     async findStrategy(event: IInputSource) {
+        this.logger.debug("Event ", event);
         this.logger.debug('Search for a strategy');
         for (const strategy of this.strategies) {
             if (await strategy.canHandle(event)) {
@@ -25,14 +26,14 @@ export class StrategyFactory implements IEventListener {
                 return;
             }
         }
+        this.logger.warn('Strategy not found');
 
         if (event.userId && this.state.isInFlow(event.userId)) {
             this.logger.debug('Flow message');
             await this.flow.handleFlow(event.userId, event.chatId, event);
             return;
-        }
 
-        this.logger.warn('Strategy not found');
+        }
     }
 
     async update(event: IInputSource): Promise<void> {
