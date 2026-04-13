@@ -18,13 +18,13 @@ export class PurchaseFlowService {
     }
 
     async startAddFlow(userId: number, chatId: number): Promise<void> {
-        this.state.startFlow(userId, chatId, PurchaseStep.NAME);
+        this.state.startFlow(userId, chatId, PurchaseStep.NAME, 'Add');
         await this.setTimeout(userId, chatId);
         await this.sender.sendStepMessage(userId, chatId, PurchaseStep.NAME);
     }
 
     async startEditFlow(userId: number, chatId: number): Promise<void> {
-        this.state.startFlow(userId, chatId, PurchaseStep.EDIT_IN);
+        this.state.startFlow(userId, chatId, PurchaseStep.EDIT_IN, 'Edit');
         await this.setTimeout(userId, chatId);
         await this.sender.sendStepMessage(userId, chatId, PurchaseStep.EDIT_IN);
     }

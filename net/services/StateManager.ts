@@ -22,15 +22,18 @@ export class StateManager {
         return curr !== undefined && curr.currentStep !== PurchaseStep.IDLE;
     }
 
-    public startFlow(userId: number, chatId: number, step: PurchaseStep): void {
+    public startFlow(userId: number, chatId: number, step: PurchaseStep, flowName: string): void {
+        this.logger.debug('Start flow to a user', userId);
         const stack = this.getStack(userId);
         stack.push({
             userId,
             chatId,
             currentStep: step,
+            currentFlow: flowName,
             data: {}
         });
         this.states.set(userId, stack);
+        this.logger.debug('User flows: ', stack);
     }
 
     updateStep(userId: number, step: PurchaseStep): void {
@@ -68,5 +71,4 @@ export class StateManager {
         this.states.set(userId, []);
         this.logger.debug("All flows reset for user:", userId);
     }
-
 }
