@@ -27,6 +27,7 @@ export class MessageSender {
         chatId: number,
         step: PurchaseStep,
         input?: PurchaseState,
+        msgId?: number,
     ): Promise<void> {
         try {
             switch (step) {
@@ -57,15 +58,13 @@ export class MessageSender {
                     break;
 
                 case PurchaseStep.EDIT_IN:
-                    await this.bot.sendMessage(chatId,
-                        "Choose the parameter you want to change", {
-                            reply_markup: Keyboards.getEditParameter()
-                        });
+                    await this.bot.editMessageText("Choose the parameter you want to change",
+                        {chat_id: chatId, message_id: msgId});
                     break;
 
                 case PurchaseStep.EDIT_NAME:
                     await this.bot.sendMessage(chatId, "Enter a new name for the purchase", {
-                        reply_markup: Keyboards.getCancelKeyboard()
+                        reply_markup: Keyboards.getCancelEditKeyboard()
                     });
             }
         } catch (err: any) {

@@ -17,7 +17,7 @@ export class StrategyFactory implements IEventListener {
     ) {}
 
     async findStrategy(event: IInputSource) {
-        this.logger.debug("Event ", event);
+        this.logger.debug("Event ", event.data);
         this.logger.debug('Search for a strategy');
         for (const strategy of this.strategies) {
             if (await strategy.canHandle(event)) {

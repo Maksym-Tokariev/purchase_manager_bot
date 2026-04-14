@@ -18,6 +18,7 @@ import {HelpStrategy} from "./HelpStrategy";
 import {RefStrategy} from "./RefStrategy";
 import {OptionStrategy} from "./OptionStrategy";
 import {StartEditNameStrategy} from "./StartEditNameStrategy";
+import {CancelEditStrategy} from "./CancelEditStrategy";
 
 export class StrategyRegistry {
     private readonly _strategies: Set<IStrategy> = new Set<IStrategy>();
@@ -43,6 +44,7 @@ export class StrategyRegistry {
         this._strategies.add(new RefStrategy(bot));
         this._strategies.add(new OptionStrategy(bot));
         this._strategies.add(new StartEditNameStrategy(bot, state, sender));
+        this._strategies.add(new CancelEditStrategy(bot, state));
     }
 
     get strategies(): Set<IStrategy> {

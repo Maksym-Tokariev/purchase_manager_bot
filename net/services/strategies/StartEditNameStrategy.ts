@@ -17,13 +17,18 @@ export class StartEditNameStrategy extends BaseStrategy {
     async handle(input: IInputSource): Promise<void> {
         const userId = input.userId;
         const chatId = input.chatId;
+        const msgId = input.messageId;
+        if (!msgId) {
+            console.log('Message id is undef');
+            return;
+        }
 
         if (!userId || !chatId) return;
 
         const state = this.state.getCurrState(userId);
 
         this.state.updateStep(input.userId, PurchaseStep.EDIT_NAME);
-        await this.sender.sendStepMessage(input.userId, input.chatId, PurchaseStep.EDIT_NAME, state);
+        await this.sender.sendStepMessage(input.userId, input.chatId, PurchaseStep.EDIT_NAME, state, input.messageId);
         await this.answerQuery(input);
     }
 
